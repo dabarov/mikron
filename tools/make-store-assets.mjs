@@ -4,7 +4,7 @@
  * from the REAL extension running in Playwright's Chromium.
  *
  *   node tools/make-store-assets.mjs                       # everything
- *   node tools/make-store-assets.mjs --only shots,promo,gif  # a subset (shots | promo | gif)
+ *   node tools/make-store-assets.mjs --only shots,promo,icon,gif  # a subset
  *   node tools/make-store-assets.mjs --shots 1,4             # only some screenshots (with --only shots)
  *   node tools/make-store-assets.mjs --work /some/dir         # keep intermediates there
  *
@@ -15,6 +15,7 @@
  *   screenshot-1.png … screenshot-5.png   1280×800, 24-bit RGB PNG, no alpha
  *   promo-small-440x280.png, promo-marquee-1400x560.png, social-preview-1280x640.png,
  *   youtube-thumbnail-1280x720.png        24-bit RGB PNG, no alpha
+ *   store-icon-128.png                    128×128 RGBA PNG: the icon artwork at 96×96, 16 px transparent margin
  *   hero.gif (README), hero.mp4 (same clip; *.mp4 is git-ignored)
  *
  * How it works
@@ -53,7 +54,7 @@ const argv = process.argv.slice(2);
 const opt = (k, d) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : d; };
 const WORK = path.resolve(opt('--work', '') || fs.mkdtempSync(path.join(os.tmpdir(), 'mikron-assets-')));
 const KEEP = argv.includes('--work');
-const ONLY = opt('--only', 'shots,promo,gif').split(',');
+const ONLY = opt('--only', 'shots,promo,icon,gif').split(',');
 const SHOTS = opt('--shots', '1,2,3,4,5').split(',').map(Number);
 fs.mkdirSync(WORK, { recursive: true });
 fs.mkdirSync(OUT, { recursive: true });
@@ -626,6 +627,37 @@ async function makeHero() {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Store icon: Google asks for 128×128 with the artwork in the central 96×96 and 16 px of transparent
+// padding. The artwork is re-rendered as a vector at 96 px from the same svg() that tools/make-icons.mjs
+// uses for extension/icons (read from that file, so there is one design source), not downscaled.
+// ---------------------------------------------------------------------------------------------
+async function makeStoreIcon() {
+  const src = fs.readFileSync(path.join(ROOT, 'tools', 'make-icons.mjs'), 'utf8');
+  const blue = src.match(/const BLUE = '([^']+)'/)[1];
+  const a = src.indexOf('function svg(size)'), b = src.indexOf('\nconst browser', a);
+  if (a < 0 || b < 0) throw new Error('svg() not found in tools/make-icons.mjs');
+  const svg = new Function('BLUE', src.slice(a, b) + '\nreturn svg;')(blue);
+  const browser = await chromium.launch({ channel: 'chromium', headless: true });
+  try {
+    const pg = await browser.newPage({ viewport: { width: 128, height: 128 }, deviceScaleFactor: 1 });
+    await pg.setContent(`<html><body style="margin:0;background:transparent"><div style="position:absolute;left:16px;top:16px;width:96px;height:96px">${svg(96)}</div></body></html>`);
+    const file = path.join(OUT, 'store-icon-128.png');
+    await pg.screenshot({ path: path.join(WORK, 'store-icon.png'), omitBackground: true, clip: { x: 0, y: 0, width: 128, height: 128 } });
+    log('store-icon-128.png', py(String.raw`
+import sys
+from PIL import Image, PngImagePlugin
+im = Image.open(sys.argv[1]).convert('RGBA')
+a = im.split()[3]
+bb = a.getbbox()
+assert im.size == (128, 128) and bb and bb[0] >= 16 and bb[1] >= 16 and bb[2] <= 112 and bb[3] <= 112, ('artwork outside 96x96', bb)
+info = PngImagePlugin.PngInfo(); info.add(b'sRGB', b'\x00')
+im.save(sys.argv[2], 'PNG', optimize=True, pnginfo=info)
+print(im.size, im.mode, 'artwork bbox', bb)
+`, path.join(WORK, 'store-icon.png'), file));
+  } finally { await browser.close(); }
+}
+
+// ---------------------------------------------------------------------------------------------
 async function main() {
   log('work dir', WORK);
   const srv = await serve(); PORT = srv.address().port; BASE = `http://${HOST}`;
@@ -636,6 +668,7 @@ async function main() {
       await composeShots(list);
     }
     if (ONLY.includes('promo')) await makePromos();
+    if (ONLY.includes('icon')) await makeStoreIcon();
     if (ONLY.includes('gif')) await makeHero();
   } finally { srv.close(); }
   if (!KEEP) fs.rmSync(WORK, { recursive: true, force: true });

@@ -8,3 +8,7 @@ demo.mp4
 
 # promo video production files (footage, renders); the published video lives on YouTube
 promo/
+
+# maintainer-only submission sheet (holds the unlisted video link)
+store/SUBMISSION.md
+tools/record-promo-footage.mjs
