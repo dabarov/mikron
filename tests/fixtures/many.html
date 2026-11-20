@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>many elements fixture</title>
+<style>html,body{margin:0}body{background:#fff}#wrap{display:none}#vis{position:absolute;left:40px;top:40px;width:200px;height:100px;background:#dde;border-radius:8px}</style></head>
+<body><div id="vis"></div><div id="wrap"></div>
+<script>
+  const w = document.getElementById('wrap');
+  const f = document.createDocumentFragment();
+  for (let i = 0; i < 21000; i++) f.appendChild(document.createElement('i'));
+  w.appendChild(f);
+</script></body></html>

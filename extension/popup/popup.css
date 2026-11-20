@@ -1,0 +1,150 @@
+/* Bundled chip face (Geist Mono Bold, latin subset, SIL OFL 1.1: fonts/OFL.txt). */
+@font-face {
+  font-family: "Mikron Mono";
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+  src: url("../fonts/GeistMono-Bold.woff2") format("woff2");
+}
+:root {
+  color-scheme: dark;
+  --bg: #121212;
+  --surface: #141414;
+  --raised: #1b1b1c;
+  --keycap: #2b2b2d;
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #f2f2f3;
+  --muted: #8d8d92;
+  --accent: #0a8cff;
+  --blue-line: #2f9bff;
+  /* Bundled face (weight 700 only): chips in the illustration. Everything else uses the system stack. */
+  --mono: "Mikron Mono", ui-monospace, "SF Mono", SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  --mono-sys: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Segoe UI", system-ui, sans-serif;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); }
+body { width: 300px; font: 13px/18px var(--sans); color: var(--text); -webkit-font-smoothing: antialiased; }
+.mono { font-family: var(--mono-sys); font-weight: 400; font-variant-numeric: tabular-nums; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pop { padding: 0 0 4px; }
+
+/* ---------- animated blueprint ---------- */
+@property --n1 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --n2 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --n3 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --n4 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+@property --n5 { syntax: "<integer>"; inherits: true; initial-value: 0; }
+
+.art {
+  position: relative; height: 126px; overflow: hidden;
+  background-color: #0e0e0f;
+  background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.4px);
+  background-size: 12px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.art-card {
+  position: absolute; left: 40px; top: 24px; width: 220px; height: 72px;
+  border-radius: 14px; background: #060606; border: 1px solid var(--line);
+}
+.art-card .bar { position: absolute; left: 16px; height: 7px; border-radius: 4px; background: rgba(255,255,255,.14); }
+.art-card .b1 { top: 18px; width: 70px; }
+.art-card .b2 { top: 34px; width: 108px; background: rgba(255,255,255,.08); }
+.art-card .tile { position: absolute; right: 56px; top: 16px; width: 0; }
+.art-card .btnp { position: absolute; right: 16px; top: 20px; width: 40px; height: 28px; border-radius: 8px; background: rgba(255,255,255,.12); }
+
+.art-sel {
+  position: absolute; left: 28px; top: 14px; width: 0; height: 0;
+  border: 1px solid rgba(56,152,255,.9); background: rgba(16,30,44,.78);
+  overflow: visible;
+  animation: sel 4.8s var(--ease) infinite, counts 4.8s linear infinite;
+}
+.art-sel .hatch { position: absolute; inset: 0; opacity: .55; }
+.chip {
+  position: absolute; z-index: 1; height: 16px; padding: 0 4px; border-radius: 4px;
+  background: var(--accent); color: #fff; font: 700 11px/16px var(--mono);
+  font-variant-numeric: tabular-nums; white-space: nowrap; opacity: 0;
+  animation: chipin 4.8s ease infinite;
+}
+.chip.dark { background: #05080d; color: var(--blue-line); }
+.chip.c-size { left: 50%; top: 100%; margin: 6px 0 0 -27px; animation-name: chipSize; }
+.chip.c-pad { left: 8px; top: 6px; animation-name: chipPad; }
+.chip.c-w { right: 12px; bottom: 10px; animation-name: chipW; }
+.n { font-weight: 700; }
+.n::before { content: counter(c); }
+.n1 { counter-reset: c var(--n1); } .n2 { counter-reset: c var(--n2); } .n3 { counter-reset: c var(--n3); }
+.n4 { counter-reset: c var(--n4); } .n5 { counter-reset: c var(--n5); }
+
+@keyframes sel {
+  0%, 8% { width: 0; height: 0; opacity: 0; }
+  10% { opacity: 1; }
+  40%, 82% { width: 244px; height: 84px; opacity: 1; }
+  92%, 100% { width: 244px; height: 84px; opacity: 0; }
+}
+@keyframes counts {
+  0%, 12% { --n1: 0; --n2: 0; --n3: 0; --n4: 0; --n5: 0; }
+  50%, 100% { --n1: 220; --n2: 72; --n3: 16; --n4: 40; --n5: 28; }
+}
+@keyframes chipSize { 0%, 38% { opacity: 0; } 44%, 82% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes chipPad  { 0%, 30% { opacity: 0; } 36%, 82% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes chipW    { 0%, 34% { opacity: 0; } 40%, 82% { opacity: 1; } 92%, 100% { opacity: 0; } }
+@keyframes chipin { to { opacity: 1; } }
+
+/* The layout of .art-sel is the final state for people who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  .art-sel, .chip { animation: none !important; }
+  .art-sel { width: 244px; height: 84px; --n1: 220; --n2: 72; --n3: 16; --n4: 40; --n5: 28; }
+  .chip { opacity: 1; }
+  .switch .track, .switch .thumb, .seg button { transition: none !important; }
+}
+
+/* ---------- header ---------- */
+.head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px 10px; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand img { border-radius: 5px; display: block; }
+.brand h1 { margin: 0; font-size: 14px; line-height: 18px; font-weight: 600; letter-spacing: -.01em; }
+.brand p { margin: 0; font-size: 12px; line-height: 16px; color: var(--muted); }
+.pop.is-blocked .brand p { color: #b8b8bd; }
+
+/* ---------- groups / rows ---------- */
+.group { margin: 0 12px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 42px; padding: 0 12px; }
+.row + .row { border-top: 1px solid var(--line); }
+.row.col { flex-direction: column; align-items: stretch; justify-content: center; gap: 8px; padding: 10px 12px; }
+.t { font-size: 13px; line-height: 18px; }
+.host { display: inline-block; max-width: 128px; vertical-align: bottom; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--blue-line); font-size: 12px; }
+.group[hidden] { display: none; }
+
+/* ---------- switch ---------- */
+.switch { position: relative; display: inline-flex; flex: none; cursor: pointer; }
+.switch input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.track { width: 36px; height: 20px; border-radius: 10px; background: #2b2b2d; border: 1px solid var(--line); transition: background .16s var(--ease), border-color .16s; position: relative; }
+.thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #d8d8da; box-shadow: 0 1px 2px rgba(0,0,0,.4); transition: transform .16s var(--ease), background .16s; }
+.switch input:checked + .track { background: var(--accent); border-color: transparent; }
+.switch input:checked + .track .thumb { transform: translateX(16px); background: #fff; }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+.switch input:disabled + .track { opacity: .45; }
+
+/* ---------- segmented ---------- */
+.seg { display: flex; padding: 2px; gap: 2px; border-radius: 9px; background: #0c0c0d; border: 1px solid var(--line); }
+.seg button { flex: 1; height: 24px; padding: 0 4px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background .14s, color .14s; }
+.seg button:hover { color: var(--text); }
+.seg button[aria-checked="true"] { background: var(--keycap); color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+.seg button:focus-visible { outline-offset: 0; }
+
+/* ---------- legend ---------- */
+.legend { margin: 0 12px 8px; padding: 6px 4px 4px; display: grid; gap: 4px; }
+.legend > div { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 12px; min-height: 24px; }
+.keys { display: inline-flex; align-items: center; gap: 7px; }
+kbd { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; border-radius: 6px; background: var(--keycap); color: #fff; font: 500 11.5px/20px var(--sans); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 0 1px rgba(0,0,0,.35); }
+.keys em { font-style: normal; color: #e6e6e6; font-size: 12px; }
+
+/* ---------- footer links (quiet) ---------- */
+.foot { display: flex; align-items: center; gap: 14px; margin: 0 16px; padding: 8px 0 10px; border-top: 1px solid var(--line); }
+.fgap { flex: 1; }
+.flink { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; line-height: 18px; text-decoration: none; border-radius: 4px; }
+.flink:hover { color: var(--text); }
+.flink .heart { flex: none; }

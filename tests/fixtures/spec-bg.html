@@ -1,0 +1,15 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>spec bg</title>
+<style>
+  body { margin: 0; font: 14px/1.4 system-ui, sans-serif; padding: 16px; }
+  .b { width: 200px; height: 60px; margin-bottom: 8px; border-radius: 6px; }
+  .layered { background: url("/tests/fixtures/triangle.svg?v=2") no-repeat, linear-gradient(135deg, #a5b4fc, #6366f1); }
+  .grad { background: linear-gradient(135deg, #fda4af, #fb923c); }
+  .solid { background: #eef; }
+  .setimg { background-image: image-set(url("/tests/fixtures/triangle.svg") 1x); }
+</style></head><body>
+<div class="b layered"></div>
+<div class="b grad"></div>
+<div class="b solid"></div>
+<div class="b setimg"></div>
+</body></html>

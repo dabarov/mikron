@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>iframe fixture</title>
+<style>html,body{margin:0}body{background:#f4f4f4;height:600px}
+#f{position:absolute;left:300px;top:60px;width:380px;height:360px;border:0;background:#fff}</style></head>
+<body>
+<iframe id="f" srcdoc="<!doctype html><body style='margin:0;background:#e8f0ff;font:14px system-ui'><div id=x style='margin:20px;padding:12px;background:#fff;border-radius:8px'>Inside the iframe</div><script>window.__frameMoves=0;document.addEventListener('pointermove',()=>{window.__frameMoves++;parent.postMessage('fmove','*')});document.addEventListener('pointerdown',()=>parent.postMessage('fdown','*'));document.addEventListener('pointerup',()=>parent.postMessage('fup','*'))</script></body>"></iframe>
+<script>window.__frameMsgs=[];addEventListener('message',e=>window.__frameMsgs.push(e.data));</script>
+</body></html>

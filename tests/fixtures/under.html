@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>hidden-under-blueprint fixture</title>
+<style>html,body{margin:0}body{background:#fff;height:800px;position:relative;font:15px system-ui}
+#danger{position:absolute;left:120px;top:120px;width:160px;height:40px}
+#lnk{position:absolute;left:120px;top:200px}
+#menu{position:absolute;left:420px;top:60px;width:200px;height:120px;background:#eef;border:1px solid #99a}</style></head>
+<body>
+<button id="danger" type="button">Delete everything</button>
+<a id="lnk" href="#followed">A link under the blueprint</a>
+<div id="menu">Open menu (closes on outside pointerdown, capture phase)</div>
+<script>
+  window.__danger = 0; window.__menuClosed = 0;
+  document.getElementById('danger').addEventListener('click', () => window.__danger++);
+  document.getElementById('lnk').addEventListener('click', (e) => { e.preventDefault(); window.__link = (window.__link || 0) + 1; });
+  // Headless UI style outside-click detection: capture-phase pointerdown on document.
+  document.addEventListener('pointerdown', (e) => {
+    if (!document.getElementById('menu').contains(e.target)) window.__menuClosed++;
+  }, true);
+</script></body></html>

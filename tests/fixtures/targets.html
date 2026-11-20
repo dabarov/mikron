@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>targets fixture</title>
+<style>
+  html, body { margin: 0; }
+  body { font: 16px/20px system-ui, sans-serif; background: #fff; color: #111; position: relative; height: 900px; }
+  .abs { position: absolute; box-sizing: border-box; }
+  #link { left: 40px; top: 40px; }
+  #btn { left: 40px; top: 80px; width: 100px; height: 30px; }
+  #chk { left: 40px; top: 130px; margin: 0; width: 16px; height: 16px; }
+  #para { left: 40px; top: 170px; width: 360px; margin: 0; }
+  #txt { left: 440px; top: 20px; width: 240px; height: 30px; font: 16px monospace; }
+  #ta { left: 440px; top: 60px; width: 240px; height: 60px; font: 16px monospace; }
+  #sel { left: 440px; top: 130px; width: 240px; height: 30px; }
+  #ce { left: 440px; top: 170px; width: 240px; height: 40px; border: 1px solid #999; }
+  #cv { left: 440px; top: 220px; width: 240px; height: 50px; background: #eee; }
+  #rtb { left: 440px; top: 280px; width: 240px; height: 30px; border: 1px solid #999; }
+  #mon { left: 440px; top: 320px; width: 240px; height: 30px; background: #1e1e1e; color: #fff; }
+  #cm { left: 440px; top: 360px; width: 240px; height: 30px; background: #f7f7f7; }
+  #cmn { left: 440px; top: 400px; width: 240px; height: 30px; background: #f0f0ff; }
+  #cefalse { left: 40px; top: 300px; width: 200px; height: 40px; background: #eef; }
+  #imglink { left: 40px; top: 360px; width: 120px; height: 60px; display: block; background: #cde; }
+</style></head>
+<body>
+  <a class="abs" id="link" href="#go">Link text here</a>
+  <button class="abs" id="btn" type="button">Button</button>
+  <input class="abs" id="chk" type="checkbox">
+  <p class="abs" id="para">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <input class="abs" id="txt" type="text" value="hello world selection text">
+  <textarea class="abs" id="ta">first line of text
+second line of text</textarea>
+  <select class="abs" id="sel"><option>One</option><option>Two</option></select>
+  <div class="abs" id="ce" contenteditable="true">Editable content here</div>
+  <canvas class="abs" id="cv" width="240" height="50"></canvas>
+  <div class="abs" id="rtb" role="textbox">role textbox</div>
+  <div class="abs monaco-editor" id="mon"><span>monaco line</span></div>
+  <div class="abs CodeMirror" id="cm"><span>codemirror 5</span></div>
+  <div class="abs cm-editor" id="cmn"><span>codemirror 6</span></div>
+  <div class="abs" id="cefalse" contenteditable="false">contenteditable=false</div>
+  <a class="abs" id="imglink" href="#img"><img alt="" width="120" height="60" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Crect width='120' height='60' fill='%2399c'/%3E%3C/svg%3E"></a>
+  <script>
+    // links must never navigate during tests
+    document.addEventListener('click', (e) => { if (e.target.closest && e.target.closest('a')) e.preventDefault(); });
+  </script>
+</body></html>

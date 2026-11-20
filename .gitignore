@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+tests/.out/
+dist/
+*.zip
+*.mp4
+demo.mp4
+
+# promo video production files (footage, renders); the published video lives on YouTube
+promo/

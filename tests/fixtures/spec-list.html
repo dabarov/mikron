@@ -1,0 +1,14 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>spec list</title>
+<style>
+  body { margin: 0; font: 14px/1.4 system-ui, sans-serif; padding: 16px; }
+  ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+  li.row { display: flex; gap: 12px; padding: 16px; height: 41px; background: #eef; border-radius: 8px; align-items: center; }
+  li.row .tag { background: #cce; border-radius: 4px; padding: 2px 6px; width: 32px; box-sizing: border-box; text-align: center; }
+</style></head><body>
+<ul id="list"></ul>
+<script>
+  const ul = document.getElementById('list');
+  for (let i = 0; i < 20; i++) ul.insertAdjacentHTML('beforeend', `<li class="row"><span class="tag">#${i}</span><span>Row number ${i}</span></li>`);
+</script>
+</body></html>

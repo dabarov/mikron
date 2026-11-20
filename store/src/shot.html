@@ -1,0 +1,98 @@
+<!doctype html>
+<!--
+  Layout for the store screenshots (1280×800). tools/make-store-assets.mjs opens this page at device scale 2,
+  calls window.render(data) and downsamples the result 2×. data = {
+    n: 1, caption: 'text', layers: [
+      { type: 'img', src, x, y, w, h },               // a capture, placed in composite px (CSS px of this page)
+      { type: 'cursor', kind: 'arrow'|'cross'|'hand', x, y, s },  // hotspot position, scale
+      { type: 'spec', text, x, y, w, h, title },      // the copied text, verbatim
+      { type: 'popup', src, x, y, w, h },             // a capture of the real popup, framed like Chrome's bubble
+    ] }
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Mikron Mono"; font-weight: 700; src: url("../../extension/fonts/GeistMono-Bold.woff2") format("woff2"); }
+  :root {
+    --accent: #0a8cff; --line: #2f9bff; --band: #0b0f15; --ink: #f4f6f8; --muted: #8b95a3;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+    --mono: "Mikron Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --mono-sys: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; background: #0b0f15; -webkit-font-smoothing: antialiased; }
+  .band { position: absolute; left: 0; top: 0; width: 1280px; height: 72px; background: var(--band); display: flex; align-items: center; padding: 0 40px; gap: 16px;
+    border-bottom: 1px solid rgba(56, 152, 255, .28); z-index: 5; }
+  .num { height: 28px; padding: 0 8px; border-radius: 6px; background: var(--accent); color: #fff; font: 700 17px/28px var(--mono); letter-spacing: .02em; }
+  .cap { color: var(--ink); font: 600 25px/32px var(--sans); letter-spacing: -.012em; }
+  .mark { margin-left: auto; display: flex; align-items: center; gap: 10px; color: var(--muted); font: 700 18px/1 var(--mono); letter-spacing: .01em; }
+  .mark img { width: 26px; height: 26px; display: block; }
+  .stage { position: absolute; left: 0; top: 72px; width: 1280px; height: 728px; overflow: hidden; }
+  .layer { position: absolute; display: block; }
+  img.layer { image-rendering: auto; }
+  .cursor { position: absolute; z-index: 4; filter: drop-shadow(0 1px 1.1px rgba(0,0,0,.42)); }
+
+  .spec { position: absolute; z-index: 3; border-radius: 14px; background: #0d1117; border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 24px 60px rgba(0,0,0,.45); overflow: hidden; display: flex; flex-direction: column; }
+  .spec-head { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px; border-bottom: 1px solid rgba(255,255,255,.08); color: var(--muted); font: 500 15px/1 var(--sans); }
+  .spec-head b { color: var(--ink); font-weight: 600; }
+  .spec-head .ok { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 9px; border-radius: 6px; background: rgba(10,140,255,.14); color: #6cb8ff; font: 600 13px/1 var(--sans); }
+  .spec pre { margin: 0; padding: 16px 18px; color: #d6dde6; font: 400 15px/23px var(--mono-sys); white-space: pre; overflow: hidden; flex: 1; }
+  .spec pre .h { color: #f4f6f8; }
+  .spec pre .k { color: #8b95a3; }
+  .spec pre .v { color: #6cb8ff; }
+
+  .popup { position: absolute; z-index: 3; border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 28px 70px rgba(0,0,0,.55), 0 4px 14px rgba(0,0,0,.35); }
+  .popup img { display: block; width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+  <header class="band"><span class="num" id="num">01</span><span class="cap" id="cap"></span><span class="mark"><img src="../../extension/icons/icon128.png" alt="">Mikron</span></header>
+  <div class="stage" id="stage"></div>
+<script>
+  const SPRITES = {
+    arrow: { w: 24, h: 28, hx: 3, hy: 2.5, svg: '<path d="M3 2.5V20.6L7.4 16.4L10.2 23L13.4 21.7L10.6 15.2H16.6Z" fill="#000" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>' },
+    cross: { w: 22, h: 22, hx: 11, hy: 11, svg: '<path d="M11 3.2V18.8M3.2 11H18.8" stroke="rgba(0,0,0,.55)" stroke-width="4.8" stroke-linecap="round"/><path d="M11 3.6V18.4M3.6 11H18.4" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/><path d="M11 4.6V17.4M4.6 11H17.4" stroke="#000" stroke-width="1.1"/>' },
+    hand: { w: 22, h: 24, hx: 8.2, hy: 2.2, svg: '<path d="M6.8 12.6V3.4C6.8 2.5 7.4 1.9 8.2 1.9S9.6 2.5 9.6 3.4V9.6C9.6 8.9 10.2 8.4 10.9 8.4S12.2 8.9 12.2 9.6V10.2C12.2 9.5 12.8 9 13.5 9S14.8 9.5 14.8 10.2V10.9C14.8 10.3 15.3 9.8 16 9.8S17.2 10.3 17.2 11V15.8C17.2 18.9 15.3 21.2 12.3 21.2H10.7C8.9 21.2 7.8 20.5 6.8 19.2L3.4 14.6C2.9 13.9 3 13 3.7 12.5S5.4 12.1 5.9 12.7Z" fill="#fff" stroke="#000" stroke-width="1.15" stroke-linejoin="round"/><path d="M9.6 9.6V13.6M12.2 10.2V13.6M14.8 10.9V13.6" stroke="#000" stroke-width=".9" stroke-linecap="round"/>' },
+  };
+  const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  function specHtml(text) {
+    // light syntax colouring of the plain-text spec: header line, labels, values
+    return text.split('\n').map((ln, i) => {
+      if (i === 0) return '<span class="h">' + esc(ln) + '</span>';
+      const m = ln.match(/^(\s*)(\S+(?: ×\d+)?)(\s+)(\d[\d.]* × \d[\d.]*)(.*)$/);
+      if (m) return esc(m[1]) + esc(m[2]) + esc(m[3]) + '<span class="v">' + esc(m[4]) + '</span>' + esc(m[5]).replace(/(pad|gap|r|font|bg|color) /g, '<span class="k">$1</span> ');
+      return esc(ln);
+    }).join('\n');
+  }
+  window.render = function (d) {
+    document.getElementById('num').textContent = String(d.n).padStart(2, '0');
+    document.getElementById('cap').textContent = d.caption;
+    if (d.bg) document.getElementById('stage').style.background = d.bg;
+    const st = document.getElementById('stage');
+    for (const L of d.layers) {
+      const pos = (e) => { e.style.left = L.x + 'px'; e.style.top = L.y + 'px'; if (L.w) e.style.width = L.w + 'px'; if (L.h) e.style.height = L.h + 'px'; };
+      if (L.type === 'img') { const e = new Image(); e.className = 'layer'; e.src = L.src; pos(e); st.append(e); }
+      else if (L.type === 'cursor') {
+        const S = SPRITES[L.kind] || SPRITES.arrow, s = L.s || 1, pad = 4;
+        const e = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        e.setAttribute('class', 'cursor'); e.setAttribute('viewBox', `${-pad} ${-pad} ${S.w + 2 * pad} ${S.h + 2 * pad}`);
+        e.setAttribute('width', (S.w + 2 * pad) * s); e.setAttribute('height', (S.h + 2 * pad) * s);
+        e.style.left = (L.x - (S.hx + pad) * s) + 'px'; e.style.top = (L.y - (S.hy + pad) * s) + 'px';
+        e.innerHTML = S.svg; st.append(e);
+      } else if (L.type === 'spec') {
+        const e = document.createElement('div'); e.className = 'spec'; pos(e);
+        e.innerHTML = `<div class="spec-head"><b>${esc(L.title || 'Clipboard')}</b><span>${esc(L.sub || '')}</span>${L.ok ? `<span class="ok">${esc(L.ok)}</span>` : ''}</div><pre>${specHtml(L.text)}</pre>`;
+        if (L.font) e.querySelector('pre').style.fontSize = L.font + 'px';
+        if (L.lh) e.querySelector('pre').style.lineHeight = L.lh + 'px';
+        st.append(e);
+      } else if (L.type === 'popup') {
+        const e = document.createElement('div'); e.className = 'popup'; pos(e);
+        e.innerHTML = `<img src="${L.src}" alt="">`; st.append(e);
+      }
+    }
+  };
+</script>
+</body>
+</html>

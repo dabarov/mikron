@@ -1,0 +1,52 @@
+{
+  "manifest_version": 3,
+  "name": "Mikron: Measure CSS Spacing, Padding, Sizes & Radius",
+  "short_name": "Mikron",
+  "description": "Measure any web page: hold Shift and drag to see padding, gaps, sizes and corner radius as a live blueprint, then copy the spec.",
+  "homepage_url": "https://github.com/dabarov/mikron",
+  "version": "1.0.0",
+  "minimum_chrome_version": "99",
+  "action": {
+    "default_title": "Mikron",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": ["storage", "activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "shared/settings.js",
+        "content/tokens.js",
+        "content/font.js",
+        "content/scan.js",
+        "content/spec.js",
+        "content/blueprint.js",
+        "content/ui.js",
+        "content/main.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "commands": {
+    "toggle-enabled": {
+      "suggested_key": {
+        "default": "Alt+Shift+M"
+      },
+      "description": "Turn Mikron on or off"
+    }
+  }
+}

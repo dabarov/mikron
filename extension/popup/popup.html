@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mikron</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="pop" id="pop">
+    <!-- Animated blueprint: a marquee draws over a card, chips count up. Decorative. -->
+    <div class="art" aria-hidden="true">
+      <div class="art-card">
+        <i class="bar b1"></i><i class="bar b2"></i>
+        <i class="tile"></i><i class="btnp"></i>
+      </div>
+      <div class="art-sel">
+        <span class="chip c-size"><b class="n n1"></b> × <b class="n n2"></b></span>
+        <span class="chip dark c-pad"><b class="n n3"></b></span>
+        <span class="chip c-w"><b class="n n4"></b> × <b class="n n5"></b></span>
+        <svg class="hatch" width="100%" height="100%"><defs><pattern id="h" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="rgba(56,152,255,.5)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#h)"/></svg>
+      </div>
+    </div>
+
+    <header class="head">
+      <div class="brand">
+        <img src="../icons/icon32.png" alt="" width="20" height="20">
+        <div>
+          <h1>Mikron</h1>
+          <p id="status">Measure anything on the page</p>
+        </div>
+      </div>
+      <label class="switch" title="Turn Mikron on or off">
+        <input type="checkbox" role="switch" id="enabled" aria-label="Mikron enabled">
+        <span class="track"><span class="thumb"></span></span>
+      </label>
+    </header>
+
+    <section class="group" id="siteGroup" hidden>
+      <div class="row">
+        <div class="lbl">
+          <span class="t">Enabled on <span class="host mono" id="host">example.com</span></span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" role="switch" id="siteEnabled" aria-label="Enabled on this site">
+          <span class="track"><span class="thumb"></span></span>
+        </label>
+      </div>
+    </section>
+
+    <section class="group">
+      <div class="row col">
+        <span class="t" id="modLabel">Hold to measure</span>
+        <div class="seg" role="radiogroup" aria-labelledby="modLabel" id="modifier">
+          <button type="button" role="radio" data-value="shift">⇧ Shift</button>
+          <button type="button" role="radio" data-value="alt">⌥ Alt</button>
+          <button type="button" role="radio" data-value="ctrl">⌃ Ctrl</button>
+          <button type="button" role="radio" data-value="meta">⌘ Cmd</button>
+        </div>
+      </div>
+      <div class="row">
+        <span class="t">Show hint near cursor</span>
+        <label class="switch">
+          <input type="checkbox" role="switch" id="showHint" aria-label="Show hint near cursor">
+          <span class="track"><span class="thumb"></span></span>
+        </label>
+      </div>
+      <div class="row">
+        <span class="t">Snap to <span class="mono">4px</span></span>
+        <label class="switch">
+          <input type="checkbox" role="switch" id="snap" aria-label="Snap to 4 pixels">
+          <span class="track"><span class="thumb"></span></span>
+        </label>
+      </div>
+      <div class="row col">
+        <span class="t" id="fmtLabel">Copy format</span>
+        <div class="seg" role="radiogroup" aria-labelledby="fmtLabel" id="copyFormat">
+          <button type="button" role="radio" data-value="text">Text</button>
+          <button type="button" role="radio" data-value="json">JSON</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="legend">
+      <div><span class="keys"><kbd id="kModLabel">⇧ Shift</kbd><em>+ drag</em></span><span>Measure</span></div>
+      <div><span class="keys"><kbd>Esc</kbd></span><span>Dismiss</span></div>
+      <div><span class="keys"><kbd id="kCopy">⌘C</kbd></span><span>Copy spec</span></div>
+      <div><span class="keys"><kbd id="kToggle">⌥⇧M</kbd></span><span>Toggle Mikron</span></div>
+    </footer>
+
+    <nav class="foot" aria-label="Links">
+      <a class="flink" href="../welcome/welcome.html" target="_blank" id="howLink">How it works</a>
+      <span class="fgap"></span>
+      <a class="flink" data-link="donate" href="#">
+        <svg class="heart" width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6 2.5 8.3a3.4 3.4 0 0 1 4.8-4.8L8 4.2l.7-.7a3.4 3.4 0 0 1 4.8 4.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Say thanks</a>
+      <a class="flink" data-link="repo" href="#">GitHub</a>
+    </nav>
+  </main>
+  <script src="../shared/links.js"></script>
+  <script src="../shared/settings.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

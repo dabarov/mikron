@@ -1,0 +1,74 @@
+name: Bug report
+description: Something does not work, or Mikron gets in the way of a page.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. A page where the problem can be reproduced is the most useful thing you can give us. Please do not include private or sensitive pages: a minimal HTML snippet is fine.
+  - type: input
+    id: page
+    attributes:
+      label: Page URL
+      description: The address of a public page where it happens. If the page is private or needs a login, say so and describe it in the next field instead.
+      placeholder: https://example.com/page
+  - type: textarea
+    id: minimal-page
+    attributes:
+      label: Minimal page (optional if you gave a public URL)
+      description: The smallest HTML and CSS that shows the problem.
+      render: html
+  - type: input
+    id: chrome
+    attributes:
+      label: Chrome version
+      description: Open chrome://version and copy the first line.
+      placeholder: "Google Chrome 130.0.0.0"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: macOS 15, Windows 11, Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Mikron version
+      description: Shown at chrome://extensions.
+      placeholder: "1.0.0"
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the page.
+        2. Hold Shift and drag over the card.
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag an image into this box. Check that it shows nothing private, such as other tabs or bookmarks.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Other extensions that might interact, your Mikron settings, console errors.

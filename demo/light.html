@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Northwind — Mikron light demo</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --ink: #14161a; --muted: #5d6573; --line: #e3e6eb;
+    --brand: #4f46e5; --brand-ink: #ffffff; --ok: #0f9d58; --warn: #d97706;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font); }
+  a { color: var(--brand); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* nav */
+  .nav { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .nav .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { font-weight: 700; letter-spacing: -.02em; font-size: 18px; display: flex; align-items: center; gap: 8px; }
+  .logo i { width: 22px; height: 22px; border-radius: 7px; background: linear-gradient(135deg, #6366f1, #22d3ee); display: inline-block; }
+  .nav ul { display: flex; gap: 22px; list-style: none; margin: 0 auto 0 12px; padding: 0; }
+  .nav ul a { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 500; }
+  .nav ul a:hover { color: var(--ink); }
+  .pill { display: inline-block; padding: 8px 18px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
+
+  /* hero */
+  .hero { padding: 48px 0 40px; text-align: center; }
+  .hero h1 { margin: 0 auto 16px; max-width: 720px; font-size: 52px; line-height: 1.08; letter-spacing: -.035em; }
+  .hero p { margin: 0 auto 28px; max-width: 580px; color: var(--muted); font-size: 18px; }
+  .btn { display: inline-block; font: 600 15px/1 var(--font); padding: 14px 22px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; text-decoration: none; }
+  .btn.primary { background: var(--brand); color: var(--brand-ink); box-shadow: 0 6px 16px rgba(79,70,229,.28); }
+  .btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--line); margin-left: 10px; }
+
+  /* cards */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 12px 12px 20px; box-shadow: 0 1px 2px rgba(20,22,26,.04); }
+  .card .media { height: 140px; border-radius: 10px; margin-bottom: 16px; }
+  .card img.media { display: block; width: 100%; object-fit: cover; }
+  .card h3 { margin: 0 8px 6px; font-size: 18px; letter-spacing: -.01em; }
+  .card p { margin: 0 8px 14px; color: var(--muted); font-size: 15px; }
+  .card .tags { margin: 0 8px; display: flex; gap: 8px; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #eef0ff; color: var(--brand); }
+  .badge.ok { background: #e3f6ec; color: var(--ok); }
+  .badge.warn { background: #fdf0dc; color: var(--warn); }
+  .m1 { background: linear-gradient(135deg, #a5b4fc, #6366f1); }
+  .m2 { background: linear-gradient(135deg, #fda4af, #fb923c); }
+
+  h2 { font-size: 28px; letter-spacing: -.02em; margin: 48px 0 8px; }
+  .lead { color: var(--muted); margin: 0 0 24px; max-width: 680px; }
+  .prose { max-width: 680px; }
+  .prose p { margin: 0 0 14px; }
+  .tilt { display: inline-block; transform: rotate(-2deg); background: #fff7cc; border: 1px solid #f0dd7a; padding: 10px 16px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 10px rgba(0,0,0,.08); margin: 8px 0 20px; }
+
+  /* two column: form + table */
+  .two { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
+  form { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: grid; gap: 14px; }
+  label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+  input[type=text], select, textarea { font: 400 15px/1.4 var(--font); padding: 10px 12px; border: 1px solid #cfd4dc; border-radius: 10px; background: #fff; color: var(--ink); }
+  textarea { min-height: 84px; resize: vertical; }
+  .check { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+  form button { justify-self: start; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  th { background: #fafbfc; color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* scroll area */
+  .scroller { height: 180px; overflow: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 6px; }
+  .scroller ul { list-style: none; margin: 0; padding: 0; }
+  .scroller li { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-radius: 10px; }
+  .scroller li:nth-child(odd) { background: #f4f5f8; }
+
+  .shadow-host { display: block; margin: 12px 0 0; }
+  footer { margin-top: 56px; padding: 32px 0 96px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
+  /* fixed help */
+  .help { position: fixed; right: 24px; bottom: 24px; width: 52px; height: 52px; border-radius: 50%; border: 0; background: var(--brand); color: #fff; font: 700 22px/1 var(--font); box-shadow: 0 10px 24px rgba(79,70,229,.4); cursor: pointer; z-index: 20; }
+
+  @media (max-width: 760px) { .grid, .two { grid-template-columns: 1fr; } .hero h1 { font-size: 36px; } .nav ul { display: none; } }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap">
+      <div class="logo"><i></i>Northwind</div>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#docs">Docs</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a class="pill" href="#start">Get started</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+      <h1>Plan, ship and measure — all in one calm workspace</h1>
+      <p>Northwind brings roadmaps, reviews and release notes together so your team spends less time syncing and more time <strong>building</strong>. Read the <a href="#docs">docs</a> to learn more.</p>
+      <a class="btn primary" href="#start">Start free trial</a><a class="btn ghost" href="#demo">Watch demo</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="features">
+      <div class="grid">
+        <article class="card">
+          <div class="media m1"></div>
+          <h3>Roadmaps</h3>
+          <p>Drag milestones around and see <a href="#r">dependencies</a> update <em>instantly</em>.</p>
+          <div class="tags"><span class="badge">New</span><span class="badge ok">Stable</span></div>
+        </article>
+        <article class="card">
+          <img class="media" alt="Abstract landscape" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='140' viewBox='0 0 320 140'%3E%3Crect width='320' height='140' fill='%23bfe3ff'/%3E%3Ccircle cx='250' cy='38' r='20' fill='%23fff3b0'/%3E%3Cpath d='M0 140V92l70-34 60 40 70-52 120 62v32z' fill='%2338a169'/%3E%3C/svg%3E">
+          <h3>Reviews</h3>
+          <p>Async feedback with <strong>threaded comments</strong> and one-click approvals.</p>
+          <div class="tags"><span class="badge warn">Beta</span></div>
+        </article>
+        <article class="card">
+          <div class="media m2"></div>
+          <h3>Release notes</h3>
+          <p>Write once; publish to your changelog, <a href="#r">email</a> and chat.</p>
+          <div class="tags"><span class="badge">Pro</span><span class="badge ok">Stable</span><span class="badge warn">3 drafts</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="docs" class="prose">
+      <h2>Built for teams that care about detail</h2>
+      <p class="lead">Every pixel is deliberate: spacing, type and motion are tuned so it <strong>feels</strong> fast even when it is busy.</p>
+      <p>Northwind uses a <a href="#t">4-point spacing scale</a>, a <strong>single accent colour</strong> and large touch targets. Components are documented with their <em>exact</em> measurements so designers and engineers argue less and ship more.</p>
+      <div class="tilt">Heads up — this note is rotated by 2 degrees</div>
+      <p>Need something custom? <a href="#contact">Talk to us</a> and we will help you model your workflow in an afternoon.</p>
+      <my-callout class="shadow-host"></my-callout>
+    </section>
+
+    <section id="pricing">
+      <h2>Contact us</h2>
+      <div class="two">
+        <form onsubmit="return false">
+          <label>Full name<input type="text" placeholder="Ada Lovelace"></label>
+          <label>Team size
+            <select><option>1–10</option><option>11–50</option><option>51–200</option><option>200+</option></select>
+          </label>
+          <label>How can we help?<textarea placeholder="Tell us about your project"></textarea></label>
+          <label class="check"><input type="checkbox" checked> Send me product updates</label>
+          <button class="btn primary" type="submit">Send message</button>
+        </form>
+
+        <table>
+          <thead><tr><th>Plan</th><th class="num">Seats</th><th class="num">Price</th></tr></thead>
+          <tbody>
+            <tr><td>Starter</td><td class="num">5</td><td class="num">$0</td></tr>
+            <tr><td>Team</td><td class="num">25</td><td class="num">$12</td></tr>
+            <tr><td>Business</td><td class="num">100</td><td class="num">$29</td></tr>
+            <tr><td>Enterprise</td><td class="num">∞</td><td class="num">Custom</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recent activity</h2>
+      <p class="lead">This list scrolls on its own — handy for testing nested scrollers.</p>
+      <div class="scroller" tabindex="0">
+        <ul>
+          <li><span>Roadmap Q3 approved</span><span class="badge ok">Done</span></li>
+          <li><span>Design review for onboarding</span><span class="badge warn">Pending</span></li>
+          <li><span>Release 4.2 notes drafted</span><span class="badge">Draft</span></li>
+          <li><span>Billing migration</span><span class="badge ok">Done</span></li>
+          <li><span>Accessibility audit</span><span class="badge warn">Pending</span></li>
+          <li><span>Customer interviews (6)</span><span class="badge">Scheduled</span></li>
+          <li><span>Retro action items</span><span class="badge ok">Done</span></li>
+          <li><span>Q4 planning kickoff</span><span class="badge">Scheduled</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">© 2026 Northwind Labs · <a href="#p">Privacy</a> · <a href="#t">Terms</a> · <a href="#s">Status</a></div>
+  </footer>
+
+  <button class="help" type="button" aria-label="Help">?</button>
+
+  <script>
+    class MyCallout extends HTMLElement {
+      constructor() {
+        super();
+        const root = this.attachShadow({ mode: 'open' });
+        root.innerHTML = `
+          <style>
+            .box { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: #ecfdf5; border: 1px solid #a7f3d0; font: 15px/1.4 system-ui, sans-serif; color: #064e3b; }
+            button { font: 600 14px/1 system-ui, sans-serif; padding: 10px 16px; border-radius: 10px; border: 0; background: #059669; color: #fff; cursor: pointer; }
+          </style>
+          <div class="box"><span>Web component with an open shadow root.</span><button type="button">Shadow button</button></div>`;
+      }
+    }
+    customElements.define('my-callout', MyCallout);
+  </script>
+</body>
+</html>

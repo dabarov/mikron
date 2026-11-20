@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>scan fixedwrap</title>
+<style>
+  body { margin: 0; font: 15px/1.5 system-ui, sans-serif; }
+  .root { overflow-x: hidden; }
+  .hdr { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: #222; color: #fff; padding: 0 20px; display: flex; align-items: center; gap: 16px; z-index: 5; }
+  .hdr a { color: #fff; padding: 6px 10px; border-radius: 6px; background: #444; }
+  .floatwrap .fl { width: 150px; height: 60px; float: left; margin: 8px; background: #def; border-radius: 8px; padding: 8px; }
+  main { padding: 80px 20px 20px; }
+</style></head><body>
+<div class="root">
+  <div class="zero"><header class="hdr" id="hdr"><b>Logo</b><a>Product</a><a>Pricing</a><button>Sign in</button></header></div>
+  <div class="floatwrap"><div class="fl" id="fl">Float</div></div>
+  <main><p>Page content</p></main>
+</div>
+</body></html>

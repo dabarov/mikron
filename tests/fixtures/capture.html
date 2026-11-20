@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>page pointer capture fixture</title>
+<style>html,body{margin:0}body{background:#fff;height:700px;position:relative}
+#slider{position:absolute;left:40px;top:40px;width:400px;height:240px;background:#e6ecf5;border-radius:12px}</style></head>
+<body><div id="slider"></div>
+<script>
+  window.__got = 0; window.__lost = 0; window.__moves = 0; window.__up = 0;
+  const s = document.getElementById('slider');
+  s.addEventListener('pointerdown', (e) => s.setPointerCapture(e.pointerId));
+  s.addEventListener('gotpointercapture', () => window.__got++);
+  s.addEventListener('lostpointercapture', () => window.__lost++);
+  s.addEventListener('pointermove', () => window.__moves++);
+  s.addEventListener('pointerup', () => window.__up++);
+</script></body></html>

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connectors — Mikron demo</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --page: #121212;
+    --card: #080808;
+    --panel: #161616;
+    --tile: #1f1f1f;
+    --text: #ffffff;
+    --muted: #8a8a8d;
+    --red: #e5484d;
+    --green: #30a54a;
+    --btn-bg: #1c1c1c;
+    --btn-line: rgba(255, 255, 255, 0.09);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background-color: var(--page);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.075) 1px, transparent 1.4px);
+    background-size: 16px 16px;
+    background-position: 8px 8px;
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .card {
+    width: 480px;
+    padding: 8px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 0;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 24px 60px rgba(0, 0, 0, 0.55);
+  }
+
+  /* header: padding 16 (bottom 0, the list panel is 20px below), title/subtitle gap 4 */
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 0;
+  }
+  .titles { display: flex; flex-direction: column; gap: 4px; }
+  .titles h2 { margin: 0; font-size: 18px; line-height: 24px; font-weight: 500; letter-spacing: -0.01em; }
+  .titles p { margin: 0; font-size: 14px; line-height: 20px; color: var(--muted); }
+  .count { margin: 0; font-size: 14px; line-height: 20px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .count b { color: var(--text); font-weight: 500; }
+
+  .list {
+    list-style: none;
+    margin: 20px 0 0;
+    padding: 0;
+    background: var(--panel);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+  }
+  .row:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.045); }
+
+  .status { flex: none; width: 3px; height: 40px; border-radius: 2px; background: #2a2a2a; }
+  .status.ok { background: var(--green); }
+  .status.bad { background: var(--red); }
+
+  .icon {
+    flex: none;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--tile);
+    display: grid; place-items: center;
+  }
+  .icon svg { display: block; width: 24px; height: 24px; }
+  .off .icon svg { opacity: 0.38; }
+
+  .meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .name { font-size: 16px; line-height: 20px; font-weight: 500; }
+  .state { font-size: 14px; line-height: 16px; color: var(--muted); }
+  .state.bad { color: var(--red); }
+  .off .name { color: #8a8a8d; }
+  .off .state { color: #77777a; }
+
+  .btn {
+    flex: none;
+    width: 97px; height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid var(--btn-line);
+    background: var(--btn-bg);
+    color: var(--text);
+    font: 500 14px/20px var(--font);
+    text-align: center;
+    cursor: pointer;
+  }
+  .btn:hover { background: #232323; }
+  .btn:focus-visible { outline: 2px solid #0a8cff; outline-offset: 2px; }
+</style>
+</head>
+<body>
+  <main class="card" id="card">
+    <header class="card-head">
+      <div class="titles">
+        <h2>Connectors</h2>
+        <p>Manage connected apps</p>
+      </div>
+      <p class="count"><b>1</b> of 4 active</p>
+    </header>
+
+    <ul class="list">
+      <li class="row">
+        <span class="status ok"></span>
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#5aa9ff" stroke-width="2.4"/><circle cx="12" cy="12" r="3" fill="#5aa9ff"/></svg>
+        </span>
+        <div class="meta"><span class="name">Atlas</span><span class="state">Connected</span></div>
+        <button class="btn" type="button">Disconnect</button>
+      </li>
+      <li class="row">
+        <span class="status bad"></span>
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="10" height="10" rx="2" fill="#e8e8e8"/><rect x="10.5" y="10.5" width="10" height="10" rx="2" fill="none" stroke="#e8e8e8" stroke-width="2.2"/></svg>
+        </span>
+        <div class="meta"><span class="name">Relay</span><span class="state bad">Connection lost</span></div>
+        <button class="btn" type="button">Reconnect</button>
+      </li>
+      <li class="row off">
+        <span class="status"></span>
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="4" y="14" width="16" height="4" rx="1.5" fill="#bdbdbd"/><rect x="4" y="9" width="16" height="4" rx="1.5" fill="#bdbdbd" opacity=".75"/><rect x="4" y="4" width="16" height="4" rx="1.5" fill="#bdbdbd" opacity=".5"/></svg>
+        </span>
+        <div class="meta"><span class="name">Ledger</span><span class="state">Not connected</span></div>
+        <button class="btn" type="button">Connect</button>
+      </li>
+      <li class="row off">
+        <span class="status"></span>
+        <span class="icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3.5 21 19H3z" fill="none" stroke="#bdbdbd" stroke-width="2.4" stroke-linejoin="round"/><path d="M12 10v4" stroke="#bdbdbd" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </span>
+        <div class="meta"><span class="name">Courier</span><span class="state">Not connected</span></div>
+        <button class="btn" type="button">Connect</button>
+      </li>
+    </ul>
+  </main>
+</body>
+</html>

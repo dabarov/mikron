@@ -1,0 +1,205 @@
+<!doctype html>
+<!--
+  Promo artwork in Mikron's own visual language (blueprint paper, hatching, chips, the marquee).
+  tools/make-store-assets.mjs renders it at device scale 2 and downsamples 2×:
+    promo.html?v=small    440×280   Chrome Web Store small promo tile
+    promo.html?v=marquee  1400×560  Chrome Web Store marquee promo tile
+    promo.html?v=social   1280×640  GitHub social preview
+    promo.html?v=youtube  1280×720  YouTube thumbnail
+  The chips around the wordmark show the measured size and padding of that box in this layout.
+  Fonts: the bundled Geist Mono Bold (SIL OFL) for the wordmark and chips, system sans for the tagline.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Mikron Mono"; font-weight: 700; src: url("../../extension/fonts/GeistMono-Bold.woff2") format("woff2"); }
+  :root {
+    --accent: #0a8cff; --line: #2f9bff; --paper: #131e29; --chipdark: #05080d;
+    --hatch: rgba(20, 128, 255, .5); --border: rgba(56, 152, 255, .9); --dash: rgba(56, 152, 255, .7);
+    --skel: rgba(255, 255, 255, .15);
+    --mono: "Mikron Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    --u: 1px;  /* layout unit: every size below is a multiple of it */
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; overflow: hidden; -webkit-font-smoothing: antialiased; }
+  body { position: relative; background: #080d13; color: #fff; }
+  /* graph paper: 8 / 32 unit grid, plus a soft accent glow */
+  .paper { position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at var(--gx, 50%) var(--gy, 50%), rgba(10, 140, 255, .20), transparent 70%),
+      linear-gradient(rgba(56, 152, 255, .13) 1px, transparent 1px) 0 0 / calc(32 * var(--u)) calc(32 * var(--u)),
+      linear-gradient(90deg, rgba(56, 152, 255, .13) 1px, transparent 1px) 0 0 / calc(32 * var(--u)) calc(32 * var(--u)),
+      linear-gradient(rgba(56, 152, 255, .05) 1px, transparent 1px) 0 0 / calc(8 * var(--u)) calc(8 * var(--u)),
+      linear-gradient(90deg, rgba(56, 152, 255, .05) 1px, transparent 1px) 0 0 / calc(8 * var(--u)) calc(8 * var(--u)),
+      #080d13; }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 90% at 50% 50%, transparent 55%, rgba(4, 7, 11, .75)); }
+
+  /* ---- chips (the product's: blue size chip, dark spacing chip) ---- */
+  .chip { position: absolute; white-space: nowrap; font: 700 calc(11 * var(--u)) / calc(16 * var(--u)) var(--mono); height: calc(16 * var(--u)); padding: 0 calc(4 * var(--u));
+    border-radius: calc(4 * var(--u)); background: var(--accent); color: #fff; font-variant-numeric: tabular-nums; z-index: 3; }
+  .chip.dark { background: var(--chipdark); color: var(--line); }
+
+  /* ---- measured wordmark ---- */
+  .meas { position: absolute; }
+  .mq { position: relative; border: calc(1.25 * var(--u)) solid var(--border); background: var(--paper); }
+  .band { position: relative; padding: var(--pt) var(--px);
+    background: repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px calc(8 * var(--u) / 1.4142)), rgba(30, 120, 230, .06); }
+  .content { position: relative; outline: 1px dashed var(--dash); background: var(--paper); }
+  .word { display: block; font: 700 var(--fs) / 1 var(--mono); letter-spacing: -.02em; color: #fff; padding: calc(var(--fs) * .14) calc(var(--fs) * .06) calc(var(--fs) * .1); }
+  .beam { position: absolute; background: var(--line); z-index: 2; }
+  .beam.h { height: calc(1.25 * var(--u)); }
+  .beam.v { width: calc(1.25 * var(--u)); }
+  .beam.h::before, .beam.h::after { content: ""; position: absolute; top: calc(-4 * var(--u)); width: calc(1.25 * var(--u)); height: calc(9 * var(--u)); background: var(--line); }
+  .beam.h::before { left: 0; } .beam.h::after { right: 0; }
+  .beam.v::before, .beam.v::after { content: ""; position: absolute; left: calc(-4 * var(--u)); height: calc(1.25 * var(--u)); width: calc(9 * var(--u)); background: var(--line); }
+  .beam.v::before { top: 0; } .beam.v::after { bottom: 0; }
+  .handle { position: absolute; width: calc(9 * var(--u)); height: calc(9 * var(--u)); background: #fff; border-radius: calc(1.5 * var(--u)); z-index: 4; box-shadow: 0 0 0 calc(1 * var(--u)) rgba(8, 13, 19, .6); }
+
+  .tag { position: absolute; font: 600 var(--ts) / 1.2 var(--sans); color: #cdd7e3; letter-spacing: -.01em; }
+  .tag b { color: #fff; font-weight: 600; }
+  .key { display: inline-flex; align-items: center; gap: .3em; height: 1.45em; padding: 0 .45em; border-radius: .3em; background: #2b2b2e; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.14); font-weight: 500; vertical-align: .05em; font-size: .86em; }
+
+  /* ---- blueprint fragment (rows of a card, drawn with the product's tokens) ---- */
+  .bp { position: absolute; border: calc(1.25 * var(--u)) solid var(--border); background: var(--paper); overflow: hidden; }
+  .bp .grid { position: absolute; inset: 0;
+    background:
+      linear-gradient(rgba(56,152,255,.22) 1px, transparent 1px) 0 0 / calc(16 * var(--u)) calc(16 * var(--u)),
+      linear-gradient(90deg, rgba(56,152,255,.22) 1px, transparent 1px) 0 0 / calc(16 * var(--u)) calc(16 * var(--u)),
+      linear-gradient(rgba(56,152,255,.10) 1px, transparent 1px) 0 0 / calc(4 * var(--u)) calc(4 * var(--u)),
+      linear-gradient(90deg, rgba(56,152,255,.10) 1px, transparent 1px) 0 0 / calc(4 * var(--u)) calc(4 * var(--u)); opacity: .55; }
+  .bp .hatch { position: absolute; background: repeating-linear-gradient(-45deg, var(--hatch) 0 1px, transparent 1px calc(8 * var(--u) / 1.4142)), rgba(30,120,230,.06); }
+  .bp .plate { position: absolute; background: rgba(255,255,255,.10); }
+  .bp .box { position: absolute; background: var(--paper); outline: 1px dashed var(--dash); }
+  .bp .bar { position: absolute; height: calc(7 * var(--u)); border-radius: calc(4 * var(--u)); background: var(--skel); }
+  .bp .arc { position: absolute; border: calc(1.5 * var(--u)) solid var(--line); border-left: 0; border-top: 0; }
+</style>
+</head>
+<body>
+<div class="paper"></div><div class="vignette"></div>
+<div id="root"></div>
+<script>
+const V = new URLSearchParams(location.search).get('v') || 'small';
+const SIZES = { small: [440, 280], marquee: [1400, 560], social: [1280, 640], youtube: [1280, 720] };
+const [W, H] = SIZES[V];
+document.documentElement.style.width = document.body.style.width = W + 'px';
+document.documentElement.style.height = document.body.style.height = H + 'px';
+const root = document.getElementById('root');
+const el = (cls, css = {}, html = '') => { const e = document.createElement('div'); e.className = cls; Object.assign(e.style, css); if (html) e.innerHTML = html; return e; };
+const px = (v) => v + 'px';
+
+/** The wordmark inside a measured box: hatched padding, dashed content box, chips, corner handles. */
+function measured(parent, { x, y, fs, pt, pxl, u, centerX }) {
+  const m = el('meas'); m.style.setProperty('--u', u + 'px');
+  const mq = el('mq'), band = el('band'), content = el('content');
+  band.style.setProperty('--pt', px(pt)); band.style.setProperty('--px', px(pxl));
+  content.innerHTML = '<span class="word" style="--fs:' + fs + 'px">Mikron</span>';
+  band.append(content); mq.append(band); m.append(mq); parent.append(m);
+  const r = mq.getBoundingClientRect();
+  m.style.left = px(centerX ? Math.round(x - r.width / 2) : x); m.style.top = px(y);
+  const R = mq.getBoundingClientRect(), C = content.getBoundingClientRect();
+  const rel = (b) => ({ x: b.x - R.x, y: b.y - R.y, w: b.width, h: b.height });
+  const c = rel(C), bw = 1.25 * u;
+  // handles at the marquee corners
+  for (const [hx, hy] of [[0, 0], [R.width, 0], [0, R.height], [R.width, R.height]])
+    m.append(el('handle', { left: px(hx - 4.5 * u), top: px(hy - 4.5 * u) }));
+  // left padding I-beam + chip, top padding I-beam + chip
+  const midY = c.y + c.h / 2, midX = c.x + c.w / 2;
+  m.append(el('beam h', { left: px(bw), top: px(midY), width: px(c.x - bw) }));
+  const ch1 = el('chip dark', {}, String(Math.round(pxl))); m.append(ch1);
+  ch1.style.left = px((c.x + bw) / 2 - ch1.offsetWidth / 2); ch1.style.top = px(midY - 8 * u - 12 * u);
+  m.append(el('beam v', { top: px(bw), left: px(midX + c.w * 0.18), height: px(c.y - bw) }));
+  const ch2 = el('chip dark', {}, String(Math.round(pt))); m.append(ch2);
+  ch2.style.left = px(midX + c.w * 0.18 + 7 * u); ch2.style.top = px((c.y + bw) / 2 - 8 * u);
+  // content size chip (blue) on the content box, marquee size label under the marquee
+  const cs = el('chip', {}, `${Math.round(c.w)} × ${Math.round(c.h)}`); m.append(cs);
+  cs.style.left = px(c.x + c.w - cs.offsetWidth - 6 * u); cs.style.top = px(c.y + c.h - 8 * u);
+  const sz = el('chip', {}, `${Math.round(R.width)} × ${Math.round(R.height)}`); m.append(sz);
+  sz.style.left = px(R.width / 2 - sz.offsetWidth / 2); sz.style.top = px(R.height + 8 * u);
+  return { box: { x: R.x, y: R.y, w: R.width, h: R.height } };
+}
+
+/**
+ * A marquee over a small card, drawn the way Mikron draws it: blueprint paper with graph lines, hatched
+ * padding and gap bands, dashed content boxes, grey plates and skeleton bars, chips, a radius callout.
+ * (x, y, w) place the marquee; its height follows from the rows.
+ */
+function blueprint(parent, { x, y, w, u, rows = 2 }) {
+  const M = 24 * u, P = 12 * u, RP = 16 * u, rowH = 72 * u, gap = 12 * u;
+  const cardW = w - 2 * M, cardH = 2 * P + rows * rowH + (rows - 1) * gap, h = cardH + 2 * M;
+  const bp = el('bp', { left: px(x), top: px(y), width: px(w), height: px(h), overflow: 'visible' }); bp.style.setProperty('--u', u + 'px');
+  bp.append(el('grid'));
+  const add = (cls, css, html) => { const e = el(cls, css, html); bp.append(e); return e; };
+  const chip = (txt, dark, fx, fy) => { const c = add(dark ? 'chip dark' : 'chip', {}, txt); c.style.left = px(fx(c.offsetWidth)); c.style.top = px(fy); return c; };
+  const cx = M, cy = M;
+  add('hatch', { left: px(cx), top: px(cy), width: px(cardW), height: px(cardH), borderRadius: px(20 * u) });
+  for (let i = 0; i < rows; i++) {
+    const rx = cx + P, ry = cy + P + i * (rowH + gap), rw = cardW - 2 * P;
+    add('hatch', { left: px(rx), top: px(ry), width: px(rw), height: px(rowH), borderRadius: px(12 * u), background: 'repeating-linear-gradient(-45deg, rgba(20,128,255,.42) 0 1px, transparent 1px ' + (8 * u / 1.4142) + 'px), #121c27' });
+    add('box', { left: px(rx + RP), top: px(ry + RP), width: px(rw - 2 * RP), height: px(rowH - 2 * RP) });
+    const ix = rx + RP, iy = ry + RP;
+    add('plate', { left: px(ix), top: px(iy), width: px(40 * u), height: px(40 * u), borderRadius: px(10 * u) });
+    const bw = 88 * u, bx = rx + rw - RP - bw, room = bx - 20 * u - (ix + 52 * u);   // text column between icon and button
+    add('bar', { left: px(ix + 52 * u), top: px(iy + 8 * u), width: px(room * [0.52, 0.66, 0.44][i % 3]) });
+    add('bar', { left: px(ix + 52 * u), top: px(iy + 25 * u), width: px(room * [0.86, 0.72, 0.94][i % 3]), background: 'rgba(255,255,255,.09)' });
+    add('plate', { left: px(bx), top: px(iy + 4 * u), width: px(bw), height: px(32 * u), borderRadius: px(8 * u) });
+    chip('88 × 32', false, (cw) => bx + bw / 2 - cw / 2, iy + 40 * u - 4 * u);
+    if (i === 0) chip('40 × 40', false, () => ix + 44 * u, iy - 10 * u);
+    // row padding: I-beam + chip on the left band, and on the top band
+    add('beam h', { left: px(rx), top: px(iy + 20 * u), width: px(RP) });
+    if (i === rows - 1) chip('16', true, (cw) => rx - cw - 3 * u, iy + 12 * u);
+    // gap between rows
+    if (i < rows - 1) {
+      const gy = ry + rowH, gx = rx + rw * 0.46;
+      add('beam v', { left: px(gx), top: px(gy), height: px(gap) });
+      chip('12', true, () => gx + 8 * u, gy + gap / 2 - 8 * u);
+    }
+  }
+  // card padding chip (top band) and radius callout at the bottom-right corner
+  add('beam v', { left: px(cx + cardW * 0.46), top: px(cy), height: px(P) });
+  chip('12', true, () => cx + cardW * 0.46 + 8 * u, cy + P / 2 - 8 * u);
+  const R = 20 * u, ax = cx + cardW - R, ay = cy + cardH - R;
+  add('arc', { left: px(ax), top: px(ay), width: px(R), height: px(R), borderRadius: `0 0 ${px(R)} 0`, borderRight: `${1.5 * u}px solid var(--line)`, borderBottom: `${1.5 * u}px solid var(--line)` });
+  add('dot', { position: 'absolute', left: px(ax - 2 * u), top: px(ay - 2 * u), width: px(4 * u), height: px(4 * u), borderRadius: '50%', background: 'var(--line)' });
+  chip('r 20', false, (cw) => ax - cw - 2 * u, ay + R - 8 * u);
+  // corner handles and the size label under the marquee
+  for (const [hx, hy] of [[0, 0], [w, 0], [0, h], [w, h]]) add('handle', { left: px(hx - 4.5 * u - 0.6 * u), top: px(hy - 4.5 * u - 0.6 * u) });
+  chip(`${Math.round(w / u)} × ${Math.round(h / u)}`, false, (cw) => w / 2 - cw / 2, h + 8 * u);
+  parent.append(bp);
+  return { w, h };
+}
+
+function tag(parent, html, { x, y, ts, align = 'left', w }) {
+  const t = el('tag', { left: px(x), top: px(y), textAlign: align }, html); t.style.setProperty('--ts', ts + 'px');
+  if (w) t.style.width = px(w);
+  parent.append(t); return t;
+}
+
+document.fonts.load('700 20px "Mikron Mono"').then(() => {
+  if (V === 'small') {
+    document.body.style.setProperty('--gx', '50%'); document.body.style.setProperty('--gy', '44%');
+    measured(root, { x: W / 2, y: 52, fs: 58, pt: 18, pxl: 26, u: 1.25, centerX: true });
+    tag(root, 'Measure any web page', { x: 0, y: 214, ts: 22, align: 'center', w: W });
+  } else if (V === 'marquee') {
+    document.body.style.setProperty('--gx', '30%'); document.body.style.setProperty('--gy', '50%');
+    measured(root, { x: 112, y: 150, fs: 104, pt: 26, pxl: 38, u: 2 });
+    tag(root, 'Measure any web page', { x: 112, y: 388, ts: 40 });
+    blueprint(root, { x: 790, y: 92, w: 520, u: 1.5, rows: 2 });
+  } else if (V === 'social') {
+    document.body.style.setProperty('--gx', '32%'); document.body.style.setProperty('--gy', '46%');
+    measured(root, { x: 96, y: 156, fs: 96, pt: 24, pxl: 34, u: 1.8 });
+    tag(root, 'Measure any web page', { x: 96, y: 380, ts: 40 });
+    tag(root, '<span class="key">⇧ Shift</span> + drag for padding, gaps, sizes and radius', { x: 96, y: 440, ts: 25 });
+    blueprint(root, { x: 740, y: 104, w: 456, u: 1.4, rows: 3 });
+  } else if (V === 'youtube') {
+    document.body.style.setProperty('--gx', '30%'); document.body.style.setProperty('--gy', '50%');
+    measured(root, { x: 80, y: 118, fs: 112, pt: 26, pxl: 38, u: 2 });
+    tag(root, 'Measure any<br>web page', { x: 80, y: 382, ts: 76 });
+    blueprint(root, { x: 724, y: 132, w: 488, u: 1.6, rows: 2 });
+  }
+  document.body.dataset.ready = '1';
+});
+</script>
+</body>
+</html>

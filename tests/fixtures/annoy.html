@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>coexistence fixture</title>
+<style>
+html,body{margin:0}body{background:#fff;height:900px;position:relative;font:14px/20px system-ui}
+.abs{position:absolute}
+#list,#plist{left:20px;width:300px;margin:0;padding:0;list-style:none}
+#list{top:20px}#plist{top:150px}
+#list li,#plist li{height:30px;line-height:30px;padding:0 10px;border-bottom:1px solid #ddd}
+#list li.sel,#plist li.sel{background:#cdf}
+#inp{left:20px;top:285px;width:250px}
+#plain{left:20px;top:330px;width:300px;height:100px;background:#f4f4f4}
+#lnk{left:350px;top:15px}
+#sortable{left:350px;top:45px;width:300px}
+#sortable div{height:26px;margin-bottom:4px;background:#eef;touch-action:none}
+#scrub{left:350px;top:150px;width:300px;height:10px;background:#ccc}
+#map{left:350px;top:175px;width:150px;height:80px;background:#cfe}
+#dd{left:510px;top:175px;width:100px;height:40px;background:#fec}
+#sl{left:510px;top:225px;width:100px;height:20px;background:#ddd}
+.ign{width:40px;height:40px;background:#eee;border:1px solid #999;box-sizing:border-box}
+#vid{left:350px;top:380px;width:160px;height:80px;background:#222}
+</style></head>
+<body>
+<ul id="list" class="abs"><li>Item 1 alpha</li><li>Item 2 beta</li><li>Item 3 gamma</li><li>Item 4 delta</li></ul>
+<ul id="plist" class="abs"><li>P-Item 1</li><li>P-Item 2</li><li>P-Item 3</li><li>P-Item 4</li></ul>
+<input id="inp" class="abs">
+<div id="plain" class="abs">plain area</div>
+<a id="lnk" class="abs" href="#nowhere">A normal link</a>
+<div id="sortable" class="abs"><div>Sort A</div><div>Sort B</div><div>Sort C</div></div>
+<div id="scrub" class="abs"></div>
+<div id="map" class="abs leaflet-container"></div>
+<div id="dd" class="abs" draggable="true">drag me</div>
+<div id="sl" class="abs" role="slider" tabindex="0"></div>
+<video id="vid" class="abs"></video>
+<script>
+  const L = (window.__log = []);
+  const log = (...a) => L.push(a.join(' '));
+  // list that selects by Shift+click (native mousedown default left alone)
+  let anchor = null;
+  document.querySelectorAll('#list li').forEach((li, i) => li.addEventListener('click', (e) => {
+    const items = [...document.querySelectorAll('#list li')];
+    if (e.shiftKey && anchor != null) { const a = Math.min(anchor, i), b = Math.max(anchor, i); items.forEach((x, k) => x.classList.toggle('sel', k >= a && k <= b)); log('list-range', a, b); }
+    else { items.forEach((x) => x.classList.remove('sel')); li.classList.add('sel'); anchor = i; log('list-click', i); }
+  }));
+  // file-manager style: prevents the native Shift+mousedown selection itself
+  let pAnchor = null;
+  document.querySelectorAll('#plist li').forEach((li, i) => {
+    li.addEventListener('mousedown', (e) => { if (e.shiftKey) e.preventDefault(); });
+    li.addEventListener('click', (e) => {
+      const items = [...document.querySelectorAll('#plist li')];
+      if (e.shiftKey && pAnchor != null) { const a = Math.min(pAnchor, i), b = Math.max(pAnchor, i); items.forEach((x, k) => x.classList.toggle('sel', k >= a && k <= b)); log('plist-range', a, b); }
+      else { items.forEach((x) => x.classList.remove('sel')); li.classList.add('sel'); pAnchor = i; log('plist-click', i); }
+    });
+  });
+  document.getElementById('lnk').addEventListener('click', (e) => { e.preventDefault(); log('link-click shift=' + e.shiftKey); });
+  // pointer sortable: captures the pointer on pointerdown
+  let drag = null;
+  document.querySelectorAll('#sortable div').forEach((d) => d.addEventListener('pointerdown', (e) => { drag = { y: e.clientY, moves: 0 }; d.setPointerCapture(e.pointerId); log('sort-down'); }));
+  document.getElementById('sortable').addEventListener('pointermove', (e) => { if (drag) drag.moves++; });
+  document.getElementById('sortable').addEventListener('pointerup', (e) => { if (drag) { log('sort-up moves>' + (drag.moves > 3)); drag = null; } });
+  // scrubber
+  const sc = document.getElementById('scrub'); let sd = false;
+  sc.addEventListener('pointerdown', (e) => { sd = true; sc.setPointerCapture(e.pointerId); log('scrub-down'); });
+  sc.addEventListener('pointerup', () => { if (sd) log('scrub-up'); sd = false; });
+  // ignore-selector widgets
+  window.__md = {};
+  const grid = [['ign0', 'leaflet-container'], ['ign1', 'maplibregl-map'], ['ign2', 'mapboxgl-map'], ['ign3', 'ol-viewport'], ['ign4', 'gm-style'],
+    ['ign5', '', 'role', 'scrollbar'], ['ign6', '', 'role', 'separator']];
+  grid.forEach(([id, cls, attr, val], i) => {
+    const d = document.createElement('div');
+    d.id = id; d.className = 'abs ign ' + cls; d.style.left = 350 + i * 54 + 'px'; d.style.top = '275px';
+    if (attr) d.setAttribute(attr, val);
+    document.body.appendChild(d);
+  });
+  for (const id of ['map', 'dd', 'sl', 'vid', 'ign0', 'ign1', 'ign2', 'ign3', 'ign4', 'ign5', 'ign6']) {
+    document.getElementById(id).addEventListener('mousedown', (e) => { window.__md[id] = { shift: e.shiftKey, prevented: false }; });
+  }
+</script></body></html>

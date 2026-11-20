@@ -1,0 +1,80 @@
+<!doctype html>
+<!-- Store-screenshot page: a light marketing section with a three-card grid, laid out in a 580 px column. ?lm=N sets the space under the lead paragraph. Fictional content. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features</title>
+<style>
+  :root {
+    --bg: #f4f5f7; --surface: #ffffff; --ink: #15171b; --muted: #626a77; --line: #e2e5ea;
+    --brand: #4f46e5; --ok: #0f8a4f; --warn: #b45d05;
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+  .nav { display: flex; align-items: center; gap: 20px; height: 52px; padding: 0 24px; background: rgba(255,255,255,.9); border-bottom: 1px solid var(--line); }
+  .logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; letter-spacing: -.02em; }
+  .logo i { width: 18px; height: 18px; border-radius: 6px; background: linear-gradient(135deg, #818cf8, #22d3ee); }
+  .nav ul { display: flex; gap: 18px; list-style: none; margin: 0 auto 0 8px; padding: 0; }
+  .nav ul li { color: var(--muted); font-size: 13px; font-weight: 500; }
+  .nav .cta { padding: 6px 14px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 12.5px; font-weight: 600; }
+  section { padding: 28px 0 0; }
+  .room { height: 400px; }  /* scroll room below the section (an empty box: not measured) */
+  .wrap { max-width: 580px; margin: 0 auto; }
+  .eyebrow { margin: 0 0 6px; color: var(--brand); font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+  h2 { margin: 0 0 6px; font-size: 24px; line-height: 30px; letter-spacing: -.025em; }
+  .lead { margin: 0 0 32px; color: var(--muted); font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 10px 16px; box-shadow: 0 1px 2px rgba(20,22,26,.04); }
+  .media { height: 88px; border-radius: 8px; margin-bottom: 12px; }
+  .m1 { background: linear-gradient(135deg, #a5b4fc, #6366f1); }
+  .m2 { background: linear-gradient(135deg, #99f6e4, #14b8a6); }
+  .m3 { background: linear-gradient(135deg, #fda4af, #fb923c); }
+  h3 { margin: 0 6px 4px; font-size: 15px; line-height: 20px; letter-spacing: -.01em; }
+  .card p { margin: 0 6px 12px; color: var(--muted); font-size: 13px; line-height: 18px; }
+  .tags { margin: 0 6px; display: flex; gap: 6px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; line-height: 16px; font-weight: 600; background: #eef0ff; color: var(--brand); }
+  .badge.ok { background: #e2f5ea; color: var(--ok); }
+  .badge.warn { background: #fdf0dc; color: var(--warn); }
+</style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="logo"><i></i>Workspace</div>
+    <ul><li>Product</li><li>Pricing</li><li>Docs</li></ul>
+    <span class="cta">Get started</span>
+  </nav>
+  <section><div class="wrap">
+    <h2>Plan, review and ship in one place</h2>
+    <p class="lead">Roadmaps, reviews and release notes in one calm workspace.</p>
+    <div class="grid">
+      <article class="card">
+        <div class="media m1"></div>
+        <h3>Roadmaps</h3>
+        <p>Drag milestones and watch dependencies update.</p>
+        <div class="tags"><span class="badge">New</span><span class="badge ok">Stable</span></div>
+      </article>
+      <article class="card">
+        <div class="media m2"></div>
+        <h3>Reviews</h3>
+        <p>Threaded feedback and one-click approvals.</p>
+        <div class="tags"><span class="badge warn">Beta</span></div>
+      </article>
+      <article class="card">
+        <div class="media m3"></div>
+        <h3>Release notes</h3>
+        <p>Write once, publish to the changelog and email.</p>
+        <div class="tags"><span class="badge">Pro</span><span class="badge ok">Stable</span></div>
+      </article>
+    </div>
+  </div></section>
+  <div class="room"></div>
+  <script>
+    // ?lm=N: space under the lead paragraph (room for the Copy tab above a selected card)
+    const lm = new URLSearchParams(location.search).get('lm');
+    if (lm) document.querySelector('.lead').style.marginBottom = lm + 'px';
+  </script>
+</body>
+</html>

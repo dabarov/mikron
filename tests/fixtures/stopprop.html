@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>stopPropagation fixture</title>
+<style>
+html,body{margin:0}body{background:#fff;height:900px;position:relative;font:14px/20px system-ui}
+.abs{position:absolute}
+#slist,#clist,#tlist{left:20px;width:300px;margin:0;padding:0;list-style:none}
+#clist{top:20px}#slist{top:150px}#tlist{left:350px;top:200px;width:300px}
+#slist li,#clist li,#tlist li{height:30px;line-height:30px;padding:0 10px;border-bottom:1px solid #ddd}
+#widget{left:350px;top:40px;width:300px;height:80px;background:#def;border-radius:6px}
+#widget i{position:absolute;left:10px;top:30px;width:20px;height:20px;background:#36c;border-radius:50%}
+#inp{left:20px;top:300px;width:250px}
+</style></head>
+<body>
+<ul id="clist" class="abs"><li>C-Item 1 alpha</li><li>C-Item 2 beta</li><li>C-Item 3 gamma</li><li>C-Item 4 delta</li></ul>
+<ul id="slist" class="abs"><li>S-Item 1 alpha</li><li>S-Item 2 beta</li><li>S-Item 3 gamma</li><li>S-Item 4 delta</li></ul>
+<ul id="tlist" class="abs"><li>T-Item 1 alpha</li><li>T-Item 2 beta</li><li>T-Item 3 gamma</li><li>T-Item 4 delta</li></ul>
+<div id="widget" class="abs"><i></i></div>
+<input id="inp" class="abs">
+<script>
+  const L = (window.__log = []);
+  // list that prevents Shift+mousedown AND stops propagation (the window never sees the event)
+  document.querySelectorAll('#slist li').forEach((li, i) => {
+    li.addEventListener('mousedown', (e) => { if (e.shiftKey) { e.preventDefault(); e.stopPropagation(); } });
+    li.addEventListener('click', (e) => L.push('s-click ' + i + (e.shiftKey ? ' shift' : '')));
+  });
+  // list that only stops propagation of the mousedown (does not prevent it)
+  document.querySelectorAll('#tlist li').forEach((li, i) => {
+    li.addEventListener('mousedown', (e) => e.stopPropagation());
+    li.addEventListener('click', (e) => L.push('t-click ' + i + (e.shiftKey ? ' shift' : '')));
+  });
+  // control: leaves the press alone
+  document.querySelectorAll('#clist li').forEach((li, i) => li.addEventListener('click', (e) => L.push('c-click ' + i + (e.shiftKey ? ' shift' : ''))));
+  // custom drag widget: preventDefault + stopPropagation on pointerdown
+  const w = document.getElementById('widget'), dot = w.querySelector('i');
+  let wd = null;
+  w.addEventListener('pointerdown', (e) => { e.preventDefault(); e.stopPropagation(); wd = { x: e.clientX, l: 10 }; L.push('widget down'); });
+  window.addEventListener('pointermove', (e) => { if (wd) dot.style.left = (wd.l + e.clientX - wd.x) + 'px'; });
+  window.addEventListener('pointerup', () => { if (wd) L.push('widget up ' + dot.style.left); wd = null; });
+</script></body></html>

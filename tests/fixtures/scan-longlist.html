@@ -1,0 +1,16 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>scan longlist</title>
+<style>
+  body { margin: 0; font: 14px/20px system-ui, sans-serif; padding: 16px; }
+  ul { list-style: none; margin: 0; padding: 0; }
+  li.row { height: 28px; box-sizing: border-box; padding: 4px 12px; border-bottom: 1px solid #ddd; display: flex; gap: 8px; }
+  .badge { background: #eef; border-radius: 4px; padding: 0 6px; }
+</style></head><body>
+<ul id="list"></ul>
+<script>
+  // 30 000 flat siblings, built here instead of checked in
+  const parts = [];
+  for (let i = 0; i < 30000; i++) parts.push(`<li class="row"><span class="badge">#${i}</span> Item number ${i}</li>`);
+  document.getElementById('list').innerHTML = parts.join('');
+</script>
+</body></html>

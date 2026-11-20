@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>huge page fixture</title>
+<style>html,body{margin:0}body{background:#fff}#grid{position:absolute;left:0;top:0;width:718px;display:flex;flex-wrap:wrap}#grid i{display:block;width:8px;height:8px;margin:0 2px 2px 0;background:#cde}</style></head>
+<body><div id="grid"></div>
+<script>
+  // 2400 small boxes, all inside the 718 x 479 viewport: more than the scanner's 1500-node cap
+  const g = document.getElementById('grid');
+  const f = document.createDocumentFragment();
+  for (let i = 0; i < 2400; i++) f.appendChild(document.createElement('i'));
+  g.appendChild(f);
+</script></body></html>

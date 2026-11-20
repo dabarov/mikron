@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mikron</title>
+<link rel="stylesheet" href="welcome.css">
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="brand"><img src="../icons/icon48.png" alt="" width="28" height="28"><span>Mikron</span></div>
+      <h1>See the spacing behind any page.</h1>
+      <p class="lede">Hold <kbd class="key" data-mod>⇧ Shift</kbd> and drag over anything. Mikron redraws that part of the page as a live blueprint with its spacing, sizes and corner radii, and copies them as a spec.</p>
+      <p class="off" id="off" hidden>Mikron is switched off right now. Turn it on from the toolbar icon to try it here.</p>
+    </header>
+
+    <main>
+      <ol class="steps" aria-label="How it works">
+        <li class="step">
+          <span class="num mono" aria-hidden="true">1</span>
+          <h2>Hold <span data-mod-name>Shift</span></h2>
+          <p>Move the mouse a little. The cursor turns into a crosshair and a hint follows it.</p>
+          <div class="demo"><kbd class="key" data-mod>⇧ Shift</kbd></div>
+        </li>
+        <li class="step">
+          <span class="num mono" aria-hidden="true">2</span>
+          <h2>Drag over anything</h2>
+          <p>Press and drag across the area you care about. Sizes, padding, gaps and radii appear as you go.</p>
+          <div class="demo"><kbd class="key" data-mod>⇧ Shift</kbd><span class="plus">+</span><span class="drag">drag</span></div>
+        </li>
+        <li class="step">
+          <span class="num mono" aria-hidden="true">3</span>
+          <h2>Release, then Copy</h2>
+          <p>Let go to pin the selection. Click <b>Copy</b> to take the numbers with you. Esc dismisses it.</p>
+          <div class="demo"><span class="copytab">Copy</span><span class="plus">or</span><kbd class="key">Esc</kbd></div>
+        </li>
+      </ol>
+
+      <section class="try" aria-labelledby="tryh">
+        <div class="try-head">
+          <h2 id="tryh">Try it here</h2>
+          <p>Hold <span data-mod-name>Shift</span>, then drag across the card below, from outside one corner to outside the other.</p>
+        </div>
+        <div class="stage">
+          <article class="sample" id="sample">
+            <header class="s-head">
+              <div class="s-titles">
+                <h3>Studio plan</h3>
+                <p>For small teams</p>
+              </div>
+              <span class="s-badge">Popular</span>
+            </header>
+            <ul class="s-list">
+              <li class="s-row"><span class="s-dot"></span><div class="s-meta"><span class="s-name">Projects</span><span class="s-sub">Unlimited</span></div><span class="s-val mono">∞</span></li>
+              <li class="s-row"><span class="s-dot"></span><div class="s-meta"><span class="s-name">Seats</span><span class="s-sub">Included</span></div><span class="s-val mono">12</span></li>
+            </ul>
+            <footer class="s-foot">
+              <span class="s-price"><b class="mono">24</b> per month</span>
+              <button class="s-btn" type="button">Start trial</button>
+            </footer>
+          </article>
+        </div>
+      </section>
+
+      <p class="note">Tabs that were already open before you installed Mikron need one reload. Or just click the Mikron icon on that tab.</p>
+    </main>
+
+    <footer class="foot">
+      <a data-link="repo" href="#">GitHub</a>
+      <a data-link="issues" href="#">Report a problem</a>
+      <span class="grow"></span>
+      <a class="thanks" data-link="donate" href="#"><svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.6 2.5 8.3a3.4 3.4 0 0 1 4.8-4.8L8 4.2l.7-.7a3.4 3.4 0 0 1 4.8 4.8z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Say thanks</a>
+    </footer>
+  </div>
+
+  <script src="../shared/links.js"></script>
+  <!-- The overlay itself: the same files, in the same order, as the manifest's content_scripts entry.
+       They run here as plain scripts because content scripts are not injected into extension pages. -->
+  <script src="../shared/settings.js"></script>
+  <script src="../content/tokens.js"></script>
+  <script src="../content/font.js"></script>
+  <script src="../content/scan.js"></script>
+  <script src="../content/spec.js"></script>
+  <script src="../content/blueprint.js"></script>
+  <script src="../content/ui.js"></script>
+  <script src="../content/main.js"></script>
+  <script src="welcome.js"></script>
+</body>
+</html>

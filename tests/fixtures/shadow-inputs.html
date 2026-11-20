@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>shadow inputs fixture</title>
+<style>html,body{margin:0}body{background:#fff;position:relative;height:600px;font:16px system-ui}
+#open,#closed{position:absolute;left:40px;display:block}#open{top:40px}#closed{top:120px}</style></head>
+<body><x-field id="open"></x-field><x-field id="closed" data-closed></x-field>
+<script>
+  for (const host of document.querySelectorAll('x-field')) {
+    const r = host.attachShadow({ mode: host.hasAttribute('data-closed') ? 'closed' : 'open' });
+    r.innerHTML = '<input value="shadow input text to select" style="width:320px;height:32px;font:16px monospace">';
+    host.__input = r.querySelector('input');
+  }
+  window.closedInput = document.getElementById('closed').__input;
+  window.openInput = document.getElementById('open').__input;
+</script></body></html>
