@@ -13,7 +13,7 @@
     modifier: 'shift', // 'shift' | 'alt' | 'ctrl' | 'meta'
     showHint: true,
     snap: 4, // 0 = off
-    copyFormat: 'text', // 'text' | 'json'
+    copyFormat: 'text', // 'text' | 'json' | 'prompt'
     disabledSites: Object.freeze([
       'figma.com',
       'miro.com',
@@ -25,7 +25,7 @@
   });
 
   const MODIFIERS = ['shift', 'alt', 'ctrl', 'meta'];
-  const FORMATS = ['text', 'json'];
+  const FORMATS = ['text', 'json', 'prompt'];
 
   /** Fallback store when chrome.storage is missing (plain file, tests). */
   let memory = {};

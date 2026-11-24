@@ -2,13 +2,15 @@
 
 Measure any web page: hold Shift and drag to see padding, gaps, sizes and corner radius as a live blueprint, then copy the spec.
 
-Mikron is a Chrome extension (Manifest V3, plain JavaScript, no build step). On any page, hold Shift and drag to draw a marquee. Inside it the page is redrawn as a blueprint: text becomes skeleton bars, paddings and gaps become hatched bands with their measured values, boxes get `W × H` chips, and rounded corners get a radius callout. Release to pin the selection, then use the **Copy** tab to copy a text (or JSON) spec of everything measured.
+Mikron is a Chrome extension (Manifest V3, plain JavaScript, no build step). On any page, hold Shift and drag to draw a marquee. Inside it the page is redrawn as a blueprint: text becomes skeleton bars, paddings and gaps become hatched bands with their measured values, boxes get `W × H` chips, and rounded corners get a radius callout. Release to pin the selection, then use the **Copy** tab to copy a spec of everything measured, as text, as JSON, or as a block that is ready to paste into an AI assistant.
+
+Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=github&utm_medium=readme), or [try it in your browser](https://dabarov.github.io/mikron/) without installing anything: the project page runs the same code on a sample card.
 
 ![Mikron measuring a card: hatched padding bands, size chips and a corner radius](store/assets/hero.gif)
 
 ## Install
 
-From the Chrome Web Store: the listing is in review. The link will be added here as soon as it is live.
+Install Mikron from the [Chrome Web Store](https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=github&utm_medium=readme).
 
 For development, load the unpacked extension:
 
@@ -54,6 +56,10 @@ Lists of five or more siblings with the same parent, label, size and padding sho
 | Switch tab | The selection stays pinned |
 | Navigate, reload, or print | Dismissed (a same-URL navigation event does not dismiss) |
 
+### Rating reminder
+
+On the fifth spec you copy, a small **Useful? Rate Mikron** link appears beside the Copy tab. It is shown once per install: click it to open Mikron's review page in the Chrome Web Store, close it with ×, or dismiss the selection, and it does not come back. The popup has a **Rate** link as well, and using that one also counts as having seen the reminder.
+
 ## Stays out of your way
 
 Mikron acts only on modifier + primary-button drag. It never changes anything on a plain click.
@@ -81,7 +87,7 @@ Open the toolbar popup. The **How it works** link there reopens the welcome page
 | Hold to measure | Shift | Modifier key: Shift, Alt, Ctrl or Cmd |
 | Show hint near cursor | on | The hint pill that follows the cursor when armed |
 | Snap to 4px | on | Rounds selection width and height to multiples of 4 px; off rounds to whole px |
-| Copy format | Text | Text or JSON spec |
+| Copy format | Text | Text, JSON, or For AI (see [The copied spec](#the-copied-spec)) |
 
 | Command | Default | Effect |
 | --- | --- | --- |
@@ -121,6 +127,34 @@ ul.list — 464 × 291 · radius 12 · bg rgb(22, 22, 22) (partial)
 
 Padding and radius use CSS shorthand order (top right bottom left). With JSON the same tree is emitted as nested objects (`label`, `size`, `padding`, `radius`, `gap`, `text`, `font`, `color`, `background`, `partial`, `children`) under `selection`, `page`, `context` and `children`.
 
+**For AI** is the text spec made self-explanatory, for pasting into an AI assistant or a coding agent next to your own request. Each text line also carries the text colour and the font family, the lines sit in a fenced block, a one-sentence note above it says where the numbers come from, and a reading key below it explains the notation:
+
+````
+UI spec measured from a rendered web page with Mikron. Sizes are in CSS px and come from the live layout, so treat them as exact.
+
+Page: localhost:8000/demo/index.html
+Selection: 464 × 73
+Inside: main#card.card › ul.list
+
+```text
+li.row — 464 × 73 · padding 16 · gap 12
+  span.status.bad — 3 × 40 · radius 1.5 · bg rgb(229, 72, 77)
+  span.icon — 40 × 40 · radius 10 · bg rgb(31, 31, 31)
+  div.meta — 256 × 40 · gap 4
+    span.name "Relay" — color rgb(255, 255, 255) · font 16px/20px 500 -apple-system
+    span.state.bad "Connection lost" — color rgb(229, 72, 77) · font 14px/16px 400 -apple-system
+  button.btn "Reconnect" — 97 × 32 · padding 0 12 · radius 8 · bg rgb(28, 28, 28) · color rgb(255, 255, 255) · font 14px/20px 500 -apple-system
+```
+
+How to read the spec:
+- One line per element. Indentation is DOM nesting. The name is the tag with its #id and .classes, then the visible text in quotes.
+- "W × H" is the border-box size of the whole element.
+- padding and radius are in CSS shorthand order (top right bottom left; radius starts at the top-left corner).
+- gap is the space between the element's children ("x / y" when the two axes differ).
+- font is size/line-height, weight and family. bg and color are computed values.
+- "×N" after a name means N identical siblings in a row. "(partial)" means the selection cut through the element.
+````
+
 ## Permissions
 
 Mikron asks for the least it can work with. Chrome's install dialog shows one warning, the standard all-sites one ("Read and change all your data on all websites"), because the content script runs on every page. There is no second prompt, and no `host_permissions` and no `clipboardWrite`.
@@ -128,14 +162,14 @@ Mikron asks for the least it can work with. Chrome's install dialog shows one wa
 | Permission | Why |
 | --- | --- |
 | Content script on `<all_urls>`, top frame only | The Shift + drag gesture has to work on any site without a prior click. The script stays idle until you hold the modifier and drag, then reads layout and computed styles inside your selection, locally. It is not injected into iframes. |
-| `storage` | Saves your settings (on/off, disabled sites, modifier, hint, snap, copy format) in `chrome.storage.sync`. No page content is stored. |
+| `storage` | Saves your settings (on/off, disabled sites, modifier, hint, snap, copy format) in `chrome.storage.sync`, and two values for the rating reminder (how many specs you have copied, and whether the reminder was shown) in `chrome.storage.local`. No page content is stored. |
 | `activeTab` and `scripting` | Used only when you open the popup on a tab that was open before Mikron was installed: Chrome does not run a new content script there, so the popup injects Mikron's own bundled files into that one tab. Never used in the background and never on other tabs. |
 
-Copying needs no permission: the **Copy** click and Cmd/Ctrl+C write to the clipboard from inside your own gesture, through the page's `copy` event. Nothing reads the clipboard. The only links Mikron opens are the ones you click.
+Copying needs no permission: the **Copy** click and Cmd/Ctrl+C write to the clipboard from inside your own gesture, through the page's `copy` event. Nothing reads the clipboard. The only links Mikron opens are the ones you click. The one page that opens without a click is shown by Chrome after you uninstall Mikron (see Privacy).
 
 ## Privacy
 
-Mikron reads page layout only while you draw or have a selection pinned, only on your device, and sends nothing anywhere: no network requests, no analytics, no remote code. Settings live in Chrome's own storage and sync through your Chrome account if you use Sync. See [PRIVACY.md](PRIVACY.md).
+Mikron reads page layout only while you draw or have a selection pinned, only on your device, and sends nothing anywhere: no network requests, no analytics, no remote code. Settings live in Chrome's own storage and sync through your Chrome account if you use Sync. When you uninstall Mikron, Chrome opens a static page of the project site with the usual fixes and a link to a feedback form; its address carries the version you removed and nothing else. See [PRIVACY.md](PRIVACY.md).
 
 ## Limitations
 
@@ -158,15 +192,16 @@ No build step; load `extension/` directly.
 ```
 extension/
   manifest.json          MV3 manifest; content script order; toggle command
-  background.js          service worker: welcome page on first install, OFF badge, toggle command, serves the font bytes
+  background.js          service worker: welcome page on first install, OFF badge, toggle command, serves the font bytes,
+                         counts copied specs for the one-time rating reminder, sets the page opened after an uninstall
   shared/settings.js     MikronSettings: defaults, load/save/subscribe, disabled-site matching
-  shared/links.js        MikronLinks: the repository, issues and Ko-fi URLs (one definition)
+  shared/links.js        MikronLinks: the repository, issues, Ko-fi, store and project-site URLs (one definition)
   content/tokens.js      colours, timings, font stacks
   content/font.js        registers the bundled chip font (FontFace from bytes sent by the service worker)
   content/scan.js        DOM scanner -> model of boxes, atoms, padding, gaps, radii, text
-  content/spec.js        formats the model as the text / JSON spec
+  content/spec.js        formats the model as the text / JSON / For AI spec
   content/blueprint.js   canvas drawing, chips, radius callouts
-  content/ui.js          overlay host: hint pill, marquee, size label, Copy tab
+  content/ui.js          overlay host: hint pill, marquee, size label, Copy tab, rating reminder
   content/main.js        gesture state machine, scan scheduling, copy, teardown
   welcome/               first-run page (html, css, js); loads the content scripts itself so its card is measurable
   fonts/                 GeistMono-Bold.woff2 (latin subset, 10 KB) and OFL.txt, its licence
@@ -176,7 +211,9 @@ demo/index.html          dark "Connectors" card with fictional products
 demo/light.html          light, content-rich page
 tests/                   Playwright suite (run.mjs, cases/, fixtures/, lib/)
 tools/make-icons.mjs     regenerates the icons
+site/                    the project website: landing page with a live demo, and the page shown after an uninstall
 tools/package.mjs        builds dist/mikron-<version>.zip for the Chrome Web Store
+tools/build-site.mjs     builds the website into dist/site (published by .github/workflows/pages.yml)
 tools/record-demo.mjs    records mikron-demo.mp4 from the real extension
 ```
 
@@ -192,7 +229,7 @@ npm install
 npx playwright install chromium
 ```
 
-Run the tests. The suite (303 cases, about four minutes) launches Chromium with the unpacked extension (headless, persistent context) and serves fixtures from `tests/fixtures/` and the demo pages over a local HTTP server. Each fresh browser profile opens the welcome tab; the harness closes it so the page under test stays in front. Pass a name filter as an argument to run a subset:
+Run the tests. The suite (319 cases, about four and a half minutes) launches Chromium with the unpacked extension (headless, persistent context) and serves fixtures from `tests/fixtures/` and the demo pages over a local HTTP server. Each fresh browser profile opens the welcome tab; the harness closes it so the page under test stays in front. Pass a name filter as an argument to run a subset:
 
 ```bash
 npm test
@@ -208,6 +245,18 @@ Build the Chrome Web Store package (writes `dist/mikron-<version>.zip`; refuses 
 
 ```bash
 npm run package
+```
+
+Build the website (writes `dist/site/`). It is published at <https://dabarov.github.io/mikron/> by the Pages workflow on every push to `main`. Its live demo is the extension's own content scripts, wrapped with a small stand-in for the extension runtime (`site/_demo/`), so it always runs the code in `extension/`:
+
+```bash
+npm run site
+```
+
+To look at it locally, serve `dist/site`:
+
+```bash
+python3 -m http.server 8000 --directory dist/site
 ```
 
 Regenerate the icons (writes `extension/icons/`):

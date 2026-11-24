@@ -11,6 +11,10 @@ const TYPES = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.svg': 'image/svg+xml',
+  '.gif': 'image/gif',
+  '.woff2': 'font/woff2',
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml',
 };
 
 /** @returns {Promise<{port:number, close:()=>Promise<void>}>} */

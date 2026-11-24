@@ -25,6 +25,9 @@ export const DEFAULT_SETTINGS = Object.freeze({
   disabledSites: ['figma.com', 'miro.com', 'excalidraw.com', 'tldraw.com', 'canva.com', 'docs.google.com'],
 });
 
+/** Copy counter with the one-time rating reminder already spent, so it never appears in a case that is not about it. */
+export const QUIET_STATS = Object.freeze({ copies: 0, rateAsked: true });
+
 const cases = [];
 let group = '';
 
@@ -134,6 +137,13 @@ class Ctx {
   }
   async readSettings() {
     return this.env.control.evaluate(() => new Promise((r) => chrome.storage.sync.get('mikron', (v) => r(v.mikron))));
+  }
+  /** Replace the copy counter / rating-reminder flag (chrome.storage.local). Every case starts with the reminder already used up. */
+  async stats(value = QUIET_STATS) {
+    await this.env.setStats(value);
+  }
+  async readStats() {
+    return this.env.control.evaluate(() => new Promise((r) => chrome.storage.local.get('mikronStats', (v) => r(v.mikronStats || null))));
   }
   ok(cond, msg = 'expected truthy') {
     if (!cond) throw new AssertionError(msg);
@@ -260,6 +270,9 @@ async function makeEnv() {
     await env.control.evaluate((v) => new Promise((r) => chrome.storage.sync.set({ mikron: v }, () => r())), s);
     env.lastSettings = key;
   };
+  env.setStats = async (v) => {
+    await env.control.evaluate((x) => new Promise((r) => chrome.storage.local.set({ mikronStats: x }, () => r())), v);
+  };
   env.refreshSw = async () => {
     const list = ctx.serviceWorkers().filter((w) => w.url().includes(id));
     env.ext.sw = list[list.length - 1] || (await ctx.waitForEvent('serviceworker', { timeout: 10000 }));
@@ -280,9 +293,10 @@ export async function runAll({ filter } = {}) {
     const started = Date.now();
     let error = null;
     try {
-      await t.settings({}, { wait: 0 });
       // the control page must survive (a test may reload the extension)
       if (env.control.isClosed()) await env.openControl();
+      await t.settings({}, { wait: 0 });
+      await t.stats();
       await Promise.race([
         c.fn(t),
         new Promise((_, rej) => setTimeout(() => rej(new AssertionError(`case timed out after ${c.opts.timeout || 20000} ms`)), c.opts.timeout || 20000)),

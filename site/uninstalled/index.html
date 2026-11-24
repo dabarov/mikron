@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mikron has been removed</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" sizes="32x32" href="../img/icon-32.png">
+<meta name="theme-color" content="#121212">
+<link rel="stylesheet" href="../site.css">
+</head>
+<body>
+  <div class="wrap narrow">
+    <header class="top">
+      <a class="brand" href="../"><img src="../img/icon-48.png" alt="" width="28" height="28"><span>Mikron</span></a>
+    </header>
+
+    <main>
+      <div class="page-head">
+        <h1>Mikron has been removed.</h1>
+        <p>Nothing of it is left in your browser. If it got in your way, the reason helps make it better for the next person.</p>
+      </div>
+
+      <section class="block" aria-labelledby="whyh">
+        <h2 id="whyh">What made you remove it?</h2>
+        <p>Each choice opens a short form on GitHub with the reason filled in. You can add details there, or close it without sending.</p>
+        <div class="reasons" id="reasons">
+          <a data-reason="It appeared when I did not want it" href="https://github.com/dabarov/mikron/issues/new?template=feedback.yml&amp;reason=It+appeared+when+I+did+not+want+it">It appeared when I did not want it</a>
+          <a data-reason="It did not work on a site I use" href="https://github.com/dabarov/mikron/issues/new?template=feedback.yml&amp;reason=It+did+not+work+on+a+site+I+use">It did not work on a site I use</a>
+          <a data-reason="The measurements looked wrong" href="https://github.com/dabarov/mikron/issues/new?template=feedback.yml&amp;reason=The+measurements+looked+wrong">The measurements looked wrong</a>
+          <a data-reason="I only needed it once" href="https://github.com/dabarov/mikron/issues/new?template=feedback.yml&amp;reason=I+only+needed+it+once">I only needed it once</a>
+          <a data-reason="Something else" href="https://github.com/dabarov/mikron/issues/new?template=feedback.yml&amp;reason=Something+else">Something else</a>
+        </div>
+        <p class="fine">Sending the form needs a GitHub account, and what you send there is public. This page itself sends nothing: no analytics, no cookies.</p>
+      </section>
+
+      <section class="block" aria-labelledby="fixh">
+        <h2 id="fixh">If it only got in the way sometimes</h2>
+        <p>These settings are in the popup behind the Mikron toolbar icon.</p>
+        <ul class="fixes">
+          <li><b>It started while you were selecting text or using shortcuts</b><span>Change the key from Shift to Alt, Ctrl or Cmd under "Hold to measure".</span></li>
+          <li><b>It clashed with one site</b><span>Turn off "Enabled on" for that site. Mikron stays on everywhere else.</span></li>
+          <li><b>You want it only now and then</b><span>Alt+Shift+M turns Mikron off and on. The toolbar icon shows OFF while it is off.</span></li>
+        </ul>
+        <div class="cta">
+          <a class="btn" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=uninstalled">Add Mikron again</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <a href="../">About Mikron</a>
+      <a href="https://github.com/dabarov/mikron">GitHub</a>
+      <a href="https://github.com/dabarov/mikron/blob/main/PRIVACY.md">Privacy</a>
+    </footer>
+  </div>
+
+  <script>
+    // Chrome opens this page with ?v=<version of the removed extension>. Pass it on to the feedback form.
+    (function () {
+      var v = new URLSearchParams(location.search).get('v') || '';
+      if (!/^\d+(\.\d+){0,3}$/.test(v)) return;
+      document.querySelectorAll('#reasons a').forEach(function (a) {
+        var u = new URL(a.href);
+        u.searchParams.set('version', v);
+        a.href = u.href;
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -509,7 +509,7 @@
     if (e.pointerType === 'touch') return;
     trackPointer(e);
     const path = e.composedPath();
-    if (ui && path.includes(ui.copyEl)) return;
+    if (ui && (path.includes(ui.copyEl) || path.includes(ui.rateEl))) return;
     if (e.isPrimary) syncMod(e);
 
     let swallowed = false;
@@ -980,6 +980,35 @@
     didCopy = true;
     lastCopied = text;
     if (ui) ui.setCopied();
+    reportCopy();
+  }
+
+  /**
+   * Tell the worker that a spec was copied. It keeps a count, and on one occasion (see background.js) answers
+   * `ask`: the rating reminder is then shown beside the Copy tab, and the worker is told so it never asks again.
+   * Without a worker (the web demo) nothing answers and nothing is shown.
+   */
+  function reportCopy() {
+    try {
+      Promise.resolve(chrome.runtime.sendMessage({ mikron: 'copied' })).then(
+        (res) => {
+          if (!res || !res.ask || destroyed || mode !== 'pinned' || !ui || !ui.showRate()) return;
+          try {
+            Promise.resolve(chrome.runtime.sendMessage({ mikron: 'rate-shown' })).catch(() => {});
+          } catch (_) {}
+        },
+        () => {},
+      );
+    } catch (_) {}
+  }
+
+  /** A click on the rating reminder: the label opens the store's review page (the worker does), × just hides it. */
+  function rateAction(go) {
+    if (ui) ui.hideRate();
+    if (!go) return;
+    try {
+      Promise.resolve(chrome.runtime.sendMessage({ mikron: 'rate' })).catch(() => {});
+    } catch (_) {}
   }
 
   async function copyAction() {
@@ -999,21 +1028,26 @@
       await navigator.clipboard.writeText(text);
       lastCopied = text;
       if (ui) ui.setCopied();
+      reportCopy();
     } catch (_) {}
   }
 
   /**
-   * Events on the Copy tab are handled here, at window capture, so page capture-phase listeners
-   * (click-outside menus) never see them.
+   * Events on the Copy tab and the rating reminder are handled here, at window capture, so page capture-phase
+   * listeners (click-outside menus) never see them.
    */
   function onCopyTabEvent(e) {
-    if (!ui || destroyed || !e.composedPath().includes(ui.copyEl)) return;
+    if (!ui || destroyed) return;
+    const path = e.composedPath();
+    const onCopy = path.includes(ui.copyEl);
+    if (!onCopy && !path.includes(ui.rateEl)) return;
     if (!guard()) return;
     e.stopImmediatePropagation();
     if (e.type === 'mousedown') e.preventDefault(); // never steal focus / clear the page selection
     else if (e.type === 'click') {
       e.preventDefault();
-      copyAction();
+      if (onCopy) copyAction();
+      else rateAction(path.includes(ui.rateGoEl));
     }
   }
 

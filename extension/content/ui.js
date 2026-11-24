@@ -1,5 +1,5 @@
 /**
- * Mikron overlay host + chrome (hint pill, marquee, size label, Copy tab).
+ * Mikron overlay host + chrome (hint pill, marquee, size label, Copy tab, one-time rating reminder).
  * The blueprint itself is rendered by B1 into `blueprintMount`.
  */
 (function () {
@@ -89,7 +89,7 @@
 .mk-stage{position:absolute;inset:0;pointer-events:none;opacity:0;visibility:hidden}
 .mk-stage.on{opacity:1;visibility:visible}
 .mk-stage.on.out{opacity:0;transition:opacity ${dur.dismiss}ms ${ease}}
-.mk-stage.out .mk-copy{pointer-events:none}
+.mk-stage.out .mk-copy,.mk-stage.out .mk-rate{pointer-events:none}
 .mk-marquee{position:absolute;left:0;top:0;width:0;height:0;border:1px solid ${T.border || 'rgba(56,152,255,.9)'};background:${T.paper || '#131e29'} radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px) 0 0/24px 24px;will-change:transform}
 .mk-bp-mount{position:fixed;inset:0;pointer-events:none}
 .mk-size-label{position:absolute;left:0;top:0;height:16px;padding:0 5px;text-align:center;border-radius:4px;background:${accent};color:${T.accentText || '#fff'};font:700 11px/16px ${mono};font-variant-numeric:tabular-nums;white-space:nowrap;opacity:0;transition:opacity 100ms linear;pointer-events:none}
@@ -105,6 +105,13 @@
 .mk-copy.show:active .mk-copy-in{scale:.97}
 .mk-copy-in{display:flex;align-items:center;gap:6px;white-space:nowrap}
 .mk-copy-in svg{flex:none;display:block}
+.mk-rate{position:absolute;left:0;top:0;height:22px;margin:0;padding:0;display:flex;align-items:stretch;overflow:hidden;white-space:nowrap;background:${T.hintBg || '#141414'};border:1px solid ${T.hintBorder || 'rgba(255,255,255,.09)'};border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.35);font:500 12px/20px ${sans};letter-spacing:0;color:#fff;user-select:none;
+  opacity:0;visibility:hidden;pointer-events:none;transition:opacity 160ms ${copyEase},visibility 0s linear 160ms}
+.mk-rate.show{opacity:1;visibility:visible;pointer-events:auto;transition:opacity 160ms ${copyEase},visibility 0s}
+.mk-rate button{margin:0;padding:0 8px;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;letter-spacing:inherit;cursor:pointer;outline:none;-webkit-tap-highlight-color:transparent}
+.mk-rate button:hover{background:rgba(255,255,255,.08)}
+.mk-rate .mk-rate-x{padding:0 7px;color:#9a9a9e;border-left:1px solid ${T.hintBorder || 'rgba(255,255,255,.09)'}}
+.mk-rate .mk-rate-x:hover{color:#fff}
 .mk-hint{position:absolute;left:0;top:0;height:auto;padding:3px;display:flex;align-items:center;background:${T.hintBg || '#141414'};border:1px solid ${T.hintBorder || 'rgba(255,255,255,.09)'};border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,.35);font:500 12.5px/1 ${sans};color:#fff;white-space:nowrap;pointer-events:none;user-select:none;
   opacity:0;visibility:hidden;filter:blur(4px);translate:0 2px;
   transition:opacity ${dur.hintOut}ms linear,filter ${dur.hintOut}ms linear,translate ${dur.hintOut}ms linear,visibility 0s linear ${dur.hintOut}ms}
@@ -119,6 +126,8 @@
   .mk-copy-in{scale:none!important}
   .mk-hint,.mk-hint.on,.mk-copy,.mk-copy.show{filter:none!important;scale:none!important;transition:opacity 80ms linear,visibility 0s linear 80ms!important}
   .mk-hint.on,.mk-copy.show{transition:opacity 80ms linear,visibility 0s!important}
+  .mk-rate{transition:opacity 80ms linear,visibility 0s linear 80ms!important}
+  .mk-rate.show{transition:opacity 80ms linear,visibility 0s!important}
   .mk-size-label{transition-duration:60ms}
 }`;
 
@@ -132,7 +141,17 @@
     copyBtn.setAttribute('aria-label', 'Copy measured spec');
     const copyIn = el('span', 'mk-copy-in');
     copyBtn.append(copyIn);
-    stage.append(marquee, bpMount, sizeLabel, copyBtn);
+    // One-time rating reminder: sits beside the Copy tab, shown by main.js at most once per install.
+    const rate = el('div', 'mk-rate');
+    const rateGo = el('button', 'mk-rate-go');
+    rateGo.type = 'button';
+    rateGo.textContent = 'Useful? Rate Mikron';
+    const rateX = el('button', 'mk-rate-x');
+    rateX.type = 'button';
+    rateX.textContent = '×';
+    rateX.setAttribute('aria-label', 'Dismiss');
+    rate.append(rateGo, rateX);
+    stage.append(marquee, bpMount, sizeLabel, copyBtn, rate);
     const hint = el('div', 'mk-hint');
     root.append(style, shield, stage, hint);
 
@@ -151,6 +170,10 @@
     let copyShown = false;
     let copied = false;
     let copyW = 64;
+    let copyX = 0;
+    let copyY = 0;
+    let rateShown = false;
+    let rateW = 0;
     let copiedTimer = 0;
     let fadeTimer = 0;
     let fadeRes = null;
@@ -171,8 +194,8 @@
     }
     setCopyIdle();
 
-    // Events on the Copy tab are intercepted and acted on by main.js at window capture (so page
-    // capture-phase listeners never see them); hover / :active styling is pure CSS and unaffected.
+    // Events on the Copy tab and the rating reminder are intercepted and acted on by main.js at window capture
+    // (so page capture-phase listeners never see them); hover / :active styling is pure CSS and unaffected.
 
     // ---- hint pill --------------------------------------------------------------------------
     function setModifier(mod) {
@@ -230,6 +253,30 @@
       const right = Math.min(inside ? r.x + r.w - 1 : r.x + r.w, vw);
       const x = Math.max(0, right - copyW);
       copyBtn.style.translate = `${snap(x)}px ${snap(y)}px`; // not `transform`: the pressed `scale` must not shrink the offset
+      copyX = x;
+      copyY = y;
+      if (rateShown) placeRate();
+    }
+
+    /** Left of the Copy tab, on its row; right of it when there is no room on the left. */
+    function placeRate() {
+      let x = copyX - 6 - rateW;
+      if (x < 0 && copyX + copyW + 6 + rateW <= vw) x = copyX + copyW + 6;
+      rate.style.translate = `${snap(Math.max(0, x))}px ${snap(copyY)}px`;
+    }
+
+    function showRate() {
+      if (!copyShown || rateShown) return false;
+      rateShown = true;
+      rateW = Math.ceil(rate.getBoundingClientRect().width) || 150;
+      placeRate();
+      rate.classList.add('show');
+      return true;
+    }
+
+    function hideRate() {
+      rateShown = false;
+      rate.classList.remove('show');
     }
 
     let measureCtx = null;
@@ -342,6 +389,7 @@
     }
 
     function hideCopy() {
+      hideRate();
       copyShown = false;
       copyBtn.classList.remove('show');
       clearTimeout(copiedTimer);
@@ -424,6 +472,8 @@
       host,
       shield,
       copyEl: copyBtn,
+      rateEl: rate,
+      rateGoEl: rateGo,
       blueprintMount: bpMount,
       setState,
       setModifier,
@@ -435,6 +485,8 @@
       showCopy,
       setCopied,
       hideCopy,
+      showRate,
+      hideRate,
       fadeOutAll,
       ensureTop,
       destroy,

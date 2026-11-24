@@ -66,7 +66,7 @@ export async function ui(page) {
       const cs = getComputedStyle(el);
       return cs.visibility !== 'hidden' && cs.display !== 'none' && parseFloat(cs.opacity) > 0.01;
     };
-    const stage = q('.mk-stage'), marquee = q('.mk-marquee'), label = q('.mk-size-label'), copy = q('.mk-copy'), hint = q('.mk-hint');
+    const stage = q('.mk-stage'), marquee = q('.mk-marquee'), label = q('.mk-size-label'), copy = q('.mk-copy'), hint = q('.mk-hint'), rate = q('.mk-rate');
     const bp = q('.mk-bp');
     return {
       state: h.dataset.state,
@@ -81,6 +81,11 @@ export async function ui(page) {
       copyShown: !!copy && copy.classList.contains('show'),
       copyRect: rect(copy),
       copyText: copy ? copy.textContent.trim() : null,
+      rateShown: !!rate && rate.classList.contains('show') && vis(rate),
+      rateRect: rect(rate),
+      rateGoRect: rect(q('.mk-rate-go')),
+      rateXRect: rect(q('.mk-rate-x')),
+      rateText: rate ? q('.mk-rate-go').textContent : null,
       hintOn: !!hint && hint.classList.contains('on'),
       hintText: hint ? hint.textContent.replace(/\\s+/g, ' ').trim() : null,
       hintRect: rect(hint),

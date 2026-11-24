@@ -51,6 +51,8 @@ Pass a part of a test name to run a subset:
 node tests/run.mjs arming
 ```
 
+The project website is in `site/`. `npm run site` builds it into `dist/site/`; its live demo is generated from `extension/`, so a change to the content scripts changes the demo too, and `tests/cases/site.mjs` covers it.
+
 Tests live in `tests/cases/`, one file per area, registered with `test(name, fn)` and `describe(name, body)` from `tests/lib/harness.mjs`. Fixture pages are in `tests/fixtures/`. The `hygiene` file must stay last because its final case reloads the extension. A bug fix should come with a test that fails without it. If a change needs a new fixture page, add it to `tests/fixtures/`.
 
 ## Code conventions

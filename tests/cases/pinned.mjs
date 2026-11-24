@@ -124,6 +124,33 @@ describe('pinned', () => {
     t.ok(flat.some((n) => n.gap && n.gap.y && n.gap.y.includes(4)), 'y-gap 4 present');
   });
 
+  test('copyFormat prompt: Copy wraps the spec in a note, a fenced block and a reading key, with colour and font family', async (t) => {
+    await t.settings({ copyFormat: 'prompt' });
+    const p = await t.open(DEMO);
+    await pin(p, ...FULL, { pause: 150 });
+    await clickCopy(p);
+    await until(async () => /Copied/.test((await ui(p)).copyText), { msg: 'Copied state', timeout: 800 });
+    const txt = await readClipboard(p);
+    t.ok(txt.startsWith('UI spec measured from a rendered web page with Mikron.'), `opening note:\n${txt.slice(0, 200)}`);
+    t.ok(/^Page: localhost:\d+\/demo\/index\.html$/m.test(txt), 'page line');
+    t.ok(/^Selection: 540 × 452$/m.test(txt), 'selection line');
+    t.ok(!/^Mikron — /m.test(txt), 'no text-format header');
+    const m = txt.match(/^```text\n([\s\S]*?)\n```$/m);
+    t.ok(m, `one fenced block:\n${txt.slice(0, 400)}`);
+    const body = m[1];
+    const must = [
+      /^main#card\.card — 480 × 391 · padding 8 · gap 20 · radius 20 · bg rgb/m,
+      /^    li\.row — 464 × 73 · padding 16 · gap 12$/m,
+      /button\.btn "Disconnect" — 97 × 32 · padding 0 12 · radius 8 · bg rgb\([^)]*\) · color rgb\([^)]*\) · font 14px\/20px 500 \S/,
+      /h2 "Connectors" — color rgb\([^)]*\) · font 18px\/24px 500 \S/,
+    ];
+    for (const re of must) t.ok(re.test(body), `prompt spec should match ${re}\n--- got ---\n${body.slice(0, 1200)}`);
+    t.eq((body.match(/button\.btn "/g) || []).length, 4, 'four buttons in the spec');
+    const key = txt.slice(txt.lastIndexOf('```') + 3).trim();
+    t.ok(key.startsWith('How to read the spec:') && key.endsWith('means the selection cut through the element.'), `reading key closes the prompt:\n${key}`);
+    t.eq(key.split('\n').length, 7, 'key lines');
+  });
+
   test(`${MOD}+C while pinned (no page selection) copies the spec`, async (t) => {
     const p = await t.open(DEMO);
     await writeClipboard(p, 'sentinel');

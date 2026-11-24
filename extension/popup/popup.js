@@ -136,6 +136,12 @@
     });
     bindSeg($('modifier'), 'modifier');
     bindSeg($('copyFormat'), 'copyFormat');
+    // Using the Rate link counts as having been asked: the one-time reminder on the page is not shown after it.
+    $('rateLink').addEventListener('click', () => {
+      try {
+        chrome.runtime.sendMessage({ mikron: 'rate-shown' }).catch(() => {});
+      } catch (_) {}
+    });
 
     S.subscribe((s) => {
       settings = s;

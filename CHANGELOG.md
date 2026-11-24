@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+Planned as 1.1.0. The manifest already carries that version; the date and tag are added when it is published to the Chrome Web Store.
+
+### Added
+
+- A third copy format, **For AI**: the text spec with text colour and font family on each line, inside a fenced block, with a one-sentence note above it and a reading key below, ready to paste into an AI assistant or coding agent.
+- A **Rate** link in the popup, and a one-time **Useful? Rate Mikron** reminder beside the Copy tab on the fifth copied spec. It is shown once per install and never again after it is clicked, closed or dismissed with the selection. The count of copied specs and the shown flag are kept in `chrome.storage.local`.
+- After an uninstall, Chrome opens a page of the project site with the usual fixes and a link to a feedback form. The address carries the removed version and nothing else.
+- A project website, <https://dabarov.github.io/mikron/>, with a live demo that runs the extension's own content scripts on a sample card. It steps aside when the installed extension is present.
+- `tools/build-site.mjs` and a GitHub Pages workflow that build and publish the website.
+- A "Feedback after removing Mikron" issue form.
+
+### Changed
+
+- `PRIVACY.md` describes the two stored values for the rating reminder, the Rate link and the page shown after an uninstall.
+- The README links to the Chrome Web Store listing and the website.
+
 ## [1.0.0] - 2026-11-21
 
 First public release.

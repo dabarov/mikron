@@ -28,7 +28,9 @@ Paste everything between the two lines of dashes. The store shows line breaks as
 
 ```text
 ---------------- begin ----------------
-Mikron shows the real spacing, sizes and corner radii of any web page. Hold Shift, drag a box over an area, and that part of the page is redrawn as a live blueprint with the measurements on it.
+Mikron shows the real spacing, sizes and corner radii of any web page. Hold Shift, drag a box over an area, and that part of the page is redrawn as a live blueprint with the measurements on it. One click copies them as a spec you can paste into a ticket, a pull request or an AI assistant.
+
+Try it before you install: https://dabarov.github.io/mikron/
 
 HOW TO USE
 1. Hold Shift (you can choose Alt, Ctrl or Cmd in the settings). Move the mouse a little and the cursor becomes a crosshair.
@@ -47,7 +49,7 @@ WHAT YOU SEE
 - Graph paper: a 4 px and 16 px grid under the outermost boxes.
 
 THE COPIED SPEC
-The Copy tab holds a spec of everything inside the box: size, padding, gap, radius, background, and font for text. Identical siblings are collapsed into one entry with a count. You can switch the format to JSON in the settings. Illustrative example:
+The Copy tab holds a spec of everything inside the box: size, padding, gap, radius, background, and font for text. Identical siblings are collapsed into one entry with a count. The settings offer three formats: Text, JSON, and For AI. For AI is the text spec with text colour and font family added, a one-sentence note above it and a reading key below, so an AI assistant or coding agent can use the numbers without further explanation. Illustrative example of the text format:
 
 Mikron — 240 × 80 selection on example.com/pricing
 Inside: div.card
@@ -65,11 +67,11 @@ Click the toolbar icon to:
 - choose the modifier key
 - show or hide the hint next to the cursor
 - turn the 4 px snap on or off
-- choose the copy format, text or JSON
+- choose the copy format: Text, JSON or For AI
 A keyboard command (Alt+Shift+M by default, changeable at chrome://extensions/shortcuts) turns Mikron on or off.
 
 PRIVACY
-Mikron reads the layout only while you draw a box, and only on your device. It makes no network requests, has no analytics, and sends nothing anywhere. Settings are saved with Chrome's storage and sync through your own Chrome Sync if you have it on. The clipboard is written only when you press Copy. The full policy is short: https://github.com/dabarov/mikron/blob/main/PRIVACY.md
+Mikron reads the layout only while you draw a box, and only on your device. It makes no network requests, has no analytics, and sends nothing anywhere. Settings are saved with Chrome's storage and sync through your own Chrome Sync if you have it on. The clipboard is written only when you press Copy. On the fifth spec you copy, a small "Rate Mikron" link appears once beside the Copy tab; it does nothing unless you click it. If you remove Mikron, Chrome opens one static page with the usual fixes and a feedback link; its address carries the version number and nothing else. The full policy is short: https://github.com/dabarov/mikron/blob/main/PRIVACY.md
 
 LIMITS
 Mikron works in the top frame; the inside of an iframe is drawn as one box. Canvas and video are one box with a size. Extensions cannot run on browser-internal pages or the web store.
@@ -91,7 +93,9 @@ English.
 
 ### Homepage URL
 
-`https://github.com/dabarov/mikron`
+`https://dabarov.github.io/mikron/`
+
+The project page, with the live demo. Until 1.1.0 this field was the repository address.
 
 ### Support URL
 
@@ -119,13 +123,13 @@ The five screenshots in `store/assets/` (1280 × 800, 24-bit PNG without alpha, 
 
 ### Single purpose description
 
-Mikron measures the page you are looking at. Hold Shift and drag over any area of a web page to see sizes, padding, gaps and corner radii drawn as a live blueprint, and copy them as a text or JSON spec.
+Mikron measures the page you are looking at. Hold Shift and drag over any area of a web page to see sizes, padding, gaps and corner radii drawn as a live blueprint, and copy them as a spec (text, JSON, or text prepared for an AI assistant).
 
 ### Permission justifications
 
 **storage**
 
-Saves the user's settings (on/off, the sites where Mikron is switched off, the modifier key, hint, 4 px snap and copy format) with chrome.storage.sync so they persist and apply in open tabs. No page content is stored.
+Saves the user's settings (on/off, the sites where Mikron is switched off, the modifier key, hint, 4 px snap and copy format) with chrome.storage.sync so they persist and apply in open tabs. Two more values are kept with chrome.storage.local, on the device only: the number of specs the user has copied and whether the one-time rating reminder was shown. They are used only to show that reminder once. No page content is stored and nothing is transmitted.
 
 **activeTab**
 
@@ -141,11 +145,11 @@ Mikron's only function is measuring the page the user is on, with a Shift + drag
 
 ### Remote code
 
-Select: No, I am not using remote code. All code is in the package. There is no eval, no remotely hosted script and no WebAssembly. The only fetch call reads the extension's own bundled font file.
+Select: No, I am not using remote code. All code is in the package. There is no eval, no remotely hosted script and no WebAssembly. The only fetch call reads the extension's own bundled font file. chrome.runtime.setUninstallURL points at a static page of the project site (https://dabarov.github.io/mikron/uninstalled/?v=<version>); the extension loads nothing from it.
 
 ### Data usage
 
-Tick none of the data-collection boxes. Mikron does not collect or transmit any user data. It reads page layout locally while the user draws a selection, keeps it in memory only, and discards it. Settings contain no personal data and stay in the user's own chrome.storage.sync. If a reviewer asks about "website content": the layout is read and used on the device only, never stored or sent, and PRIVACY.md says so.
+Tick none of the data-collection boxes. Mikron does not collect or transmit any user data. The copy count for the rating reminder never leaves the device, and the address of the page opened after an uninstall carries only the extension version. It reads page layout locally while the user draws a selection, keeps it in memory only, and discards it. Settings contain no personal data and stay in the user's own chrome.storage.sync. If a reviewer asks about "website content": the layout is read and used on the device only, never stored or sent, and PRIVACY.md says so.
 
 Tick all three certifications:
 
@@ -168,7 +172,7 @@ No account, login or setup is needed. To see Mikron work in about 20 seconds:
 3. Press the mouse button and drag over a button, card or paragraph, then release. The area is redrawn as a blueprint: text as bars, padding as hatched bands with numbers, a blue W × H chip on boxes, and a radius callout on rounded corners.
 4. Click Copy on the pinned selection (or press Cmd/Ctrl+C) and paste into any text field to see the spec.
 5. Press Esc, or click elsewhere, to dismiss it.
-6. Click the toolbar icon to open the popup: it has the on/off switch, a per-site switch, the modifier key, hint, 4 px snap and copy format. Alt+Shift+M turns Mikron on or off.
+6. Click the toolbar icon to open the popup: it has the on/off switch, a per-site switch, the modifier key, hint, 4 px snap and copy format (Text, JSON, For AI). Alt+Shift+M turns Mikron on or off. On the fifth copied spec a small "Useful? Rate Mikron" link appears once beside the Copy tab; it opens the store review page only if clicked.
 7. If the page was open before the extension was installed, open the popup on that tab first (this uses activeTab and scripting), or reload the page.
 
 Mikron makes no network requests. You can confirm that in the extension's service worker DevTools (chrome://extensions, "Inspect views") or by reading the source.
@@ -218,7 +222,7 @@ mikron, chrome extension, measure web page, page measurement, css spacing, paddi
 
 ### Website
 
-The Chrome Web Store listing URL once published.
+`https://dabarov.github.io/mikron/` (the project page links to the store listing and has the live demo).
 
 ### Topics (12, lowercase, hyphenated)
 

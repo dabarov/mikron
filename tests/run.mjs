@@ -11,9 +11,11 @@ import './cases/settings.mjs';
 import './cases/font.mjs';
 import './cases/install.mjs';
 import './cases/popup.mjs';
+import './cases/rate.mjs';
 import './cases/welcome.mjs';
 import './cases/package.mjs';
 import './cases/demo.mjs';
+import './cases/site.mjs';
 import './cases/hygiene.mjs'; // must stay last: its final case reloads the extension
 
 const filter = process.argv[2] || process.env.MIKRON_FILTER || '';

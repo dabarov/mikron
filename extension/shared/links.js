@@ -1,14 +1,21 @@
 /**
- * MikronLinks: the one place the project's outbound URLs are defined. Plain script (no modules).
- * In a page, every <a data-link="repo|issues|donate"> gets its href, target and rel from here.
+ * MikronLinks: the one place the project's outbound URLs are defined. Plain script (no modules); also loaded
+ * by the service worker. In a page, every <a data-link="repo|issues|donate|store|rate"> gets its href, target
+ * and rel from here.
  */
 (function () {
   'use strict';
   const REPO = 'https://github.com/dabarov/mikron';
+  const STORE = 'https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd';
+  const SITE = 'https://dabarov.github.io/mikron/';
   const LINKS = Object.freeze({
     repo: REPO,
     issues: REPO + '/issues',
     donate: 'https://ko-fi.com/dabarov',
+    store: STORE,
+    rate: STORE + '/reviews',
+    site: SITE,
+    uninstalled: SITE + 'uninstalled/',
   });
 
   function wire(root) {

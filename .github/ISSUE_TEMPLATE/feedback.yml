@@ -1,0 +1,28 @@
+name: Feedback after removing Mikron
+description: Tell us why Mikron did not work out for you.
+title: "[Feedback] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking a minute. Please do not include private or sensitive pages. Everything you write here is public.
+  - type: input
+    id: reason
+    attributes:
+      label: Main reason
+      description: In a few words.
+      placeholder: It appeared when I did not want it
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: What happened
+      description: The site or kind of page, what you were doing, and what you expected instead. Optional.
+  - type: input
+    id: version
+    attributes:
+      label: Mikron version
+      description: Filled in for you when you come from the page shown after removing Mikron.
+      placeholder: "1.1.0"

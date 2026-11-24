@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mikron: measure CSS spacing, padding, sizes and radius on any web page</title>
+<meta name="description" content="A free, open-source Chrome extension. Hold Shift and drag over any web page to see padding, gaps, sizes and corner radii as a live blueprint, then copy the spec.">
+<link rel="canonical" href="https://dabarov.github.io/mikron/">
+<link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png">
+<link rel="apple-touch-icon" href="img/icon-128.png">
+<meta name="theme-color" content="#121212">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Mikron">
+<meta property="og:title" content="Mikron: measure any web page with Shift + drag">
+<meta property="og:description" content="Padding, gaps, sizes and corner radii of any page, drawn as a live blueprint. Copy them as a spec. Free and open source.">
+<meta property="og:url" content="https://dabarov.github.io/mikron/">
+<meta property="og:image" content="https://dabarov.github.io/mikron/img/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Mikron",
+  "description": "Chrome extension that measures any web page: hold Shift and drag to see padding, gaps, sizes and corner radius as a live blueprint, then copy the spec.",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "Browser extension",
+  "operatingSystem": "Chrome 99 or later",
+  "softwareVersion": "__VERSION__",
+  "license": "https://www.apache.org/licenses/LICENSE-2.0",
+  "url": "https://dabarov.github.io/mikron/",
+  "installUrl": "https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd",
+  "codeRepository": "https://github.com/dabarov/mikron",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="./"><img src="img/icon-48.png" alt="" width="28" height="28"><span>Mikron</span></a>
+      <nav class="top-nav" aria-label="Site">
+        <a href="https://github.com/dabarov/mikron">GitHub</a>
+        <a class="btn small" data-store="header" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=header">Add to Chrome</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-text">
+          <h1>Measure any web page.</h1>
+          <p class="lede">Hold <kbd class="key">⇧ Shift</kbd> and drag over anything. Mikron redraws that part of the page as a blueprint with its padding, gaps, sizes and corner radii, and copies them as a spec.</p>
+          <div class="cta">
+            <a class="btn" data-store="hero" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=hero">Add to Chrome</a>
+            <a class="btn ghost" href="#try">Try it on this page</a>
+          </div>
+          <p class="facts">Free and open source. No account, no tracking. Chrome 99 or later.</p>
+        </div>
+        <img class="hero-shot" src="img/hero.gif" width="880" height="770" alt="A selection is dragged over a card of connected apps. Inside it the card turns into a blueprint: hatched bands with padding values, blue chips with element sizes, and an arc with the corner radius.">
+      </section>
+
+      <section class="try" id="try" aria-labelledby="tryh">
+        <div class="sec-head">
+          <h2 id="tryh">Try it on this page</h2>
+          <p class="can-drag">Nothing to install: this page runs the same code as the extension. Hold <kbd class="key">⇧ Shift</kbd>, then drag across the card, from outside one corner to outside the other. Release to pin the selection, then click <b>Copy</b>.</p>
+          <p class="no-drag">Mikron needs a mouse or trackpad and a keyboard, so there is nothing to try on this device. Open this page on a computer to drag over the card below.</p>
+        </div>
+        <div class="stage">
+          <article class="card" id="card">
+            <header class="card-head">
+              <div class="titles">
+                <h3>Connectors</h3>
+                <p>Manage connected apps</p>
+              </div>
+              <p class="count"><b>1</b> of 3 active</p>
+            </header>
+            <ul class="list">
+              <li class="row">
+                <span class="status ok"></span>
+                <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#5aa9ff" stroke-width="2.4"/><circle cx="12" cy="12" r="3" fill="#5aa9ff"/></svg></span>
+                <div class="meta"><span class="name">Atlas</span><span class="state">Connected</span></div>
+                <button class="action" type="button">Disconnect</button>
+              </li>
+              <li class="row">
+                <span class="status bad"></span>
+                <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="10" height="10" rx="2" fill="#e8e8e8"/><rect x="10.5" y="10.5" width="10" height="10" rx="2" fill="none" stroke="#e8e8e8" stroke-width="2.2"/></svg></span>
+                <div class="meta"><span class="name">Relay</span><span class="state bad">Connection lost</span></div>
+                <button class="action" type="button">Reconnect</button>
+              </li>
+              <li class="row off">
+                <span class="status"></span>
+                <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="14" width="16" height="4" rx="1.5" fill="#bdbdbd"/><rect x="4" y="9" width="16" height="4" rx="1.5" fill="#bdbdbd" opacity=".75"/><rect x="4" y="4" width="16" height="4" rx="1.5" fill="#bdbdbd" opacity=".5"/></svg></span>
+                <div class="meta"><span class="name">Ledger</span><span class="state">Not connected</span></div>
+                <button class="action" type="button">Connect</button>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="how" aria-labelledby="howh">
+        <h2 id="howh">How it works</h2>
+        <ol class="steps">
+          <li class="step">
+            <span class="num mono" aria-hidden="true">1</span>
+            <h3>Hold Shift</h3>
+            <p>Move the mouse a little. The cursor turns into a crosshair and a hint follows it. You can pick Alt, Ctrl or Cmd instead.</p>
+          </li>
+          <li class="step">
+            <span class="num mono" aria-hidden="true">2</span>
+            <h3>Drag over anything</h3>
+            <p>Padding and gaps become hatched bands with their values. Boxes get a width and height. Rounded corners get a radius.</p>
+          </li>
+          <li class="step">
+            <span class="num mono" aria-hidden="true">3</span>
+            <h3>Release, then Copy</h3>
+            <p>Let go to pin the selection. Copy takes the numbers with you. Esc, or a click elsewhere, dismisses it.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="spec" aria-labelledby="spech">
+        <div class="sec-head">
+          <h2 id="spech">Copy the numbers, not a screenshot</h2>
+          <p>Copy gives you everything inside the selection as text: one line per element, with its size, padding, gap, radius, background and font. Paste it into a ticket, a pull request or an AI assistant.</p>
+        </div>
+        <div class="formats" id="formats">
+          <div class="tabs" role="tablist" aria-label="Copy format">
+            <button type="button" role="tab" id="tab-text" aria-controls="panel-text" aria-selected="true">Text</button>
+            <button type="button" role="tab" id="tab-json" aria-controls="panel-json" aria-selected="false">JSON</button>
+            <button type="button" role="tab" id="tab-prompt" aria-controls="panel-prompt" aria-selected="false">For AI</button>
+          </div>
+          <div class="panel" role="tabpanel" id="panel-text" aria-labelledby="tab-text" tabindex="0">
+            <p class="panel-note">The default. Identical siblings collapse into one line with a count.</p>
+<pre><code>Mikron — 464 × 73 selection on dabarov.github.io/mikron
+Inside: section#try.try › div.stage › article#card.card › ul.list
+
+li.row — 464 × 73 · padding 16 · gap 12
+  span.status.bad — 3 × 40 · radius 1.5 · bg rgb(229, 72, 77)
+  span.icon — 40 × 40 · radius 10 · bg rgb(31, 31, 31)
+  div.meta — 256 × 40 · gap 4
+    span.name "Relay" — font 16px/20px 500
+    span.state.bad "Connection lost" — font 14px/16px 400
+  button.action "Reconnect" — 97 × 32 · padding 0 12 · radius 8 · bg rgb(28, 28, 28) · font 14px/20px 500</code></pre>
+          </div>
+          <div class="panel" role="tabpanel" id="panel-json" aria-labelledby="tab-json" tabindex="0">
+            <p class="panel-note">The same tree as nested objects, for scripts and tools.</p>
+<pre><code>{
+  "selection": [464, 73],
+  "page": "dabarov.github.io/mikron",
+  "context": [
+    "section#try.try",
+    "div.stage",
+    "article#card.card",
+    "ul.list"
+  ],
+  "children": [
+    {
+      "label": "li.row",
+      "size": [464, 73],
+      "padding": [16, 16, 16, 16],
+      "gap": {
+        "x": [12]
+      },
+      "children": [
+        {
+          "label": "span.status.bad",
+          "size": [3, 40],
+          "radius": [1.5, 1.5, 1.5, 1.5],
+          "background": "rgb(229, 72, 77)",
+          "children": []
+        },
+        {
+          "label": "span.icon",
+          "size": [40, 40],
+          "radius": [10, 10, 10, 10],
+          "background": "rgb(31, 31, 31)",
+          "children": []
+        },
+        {
+          "label": "div.meta",
+          "size": [256, 40],
+          "gap": {
+            "y": [4]
+          },
+          "children": [
+            {
+              "label": "span.name",
+              "size": [256, 20],
+              "text": "Relay",
+              "font": {
+                "size": 16,
+                "lineHeight": "20px",
+                "weight": "500",
+                "family": "-apple-system"
+              },
+              "color": "rgb(242, 242, 243)",
+              "children": []
+            },
+            {
+              "label": "span.state.bad",
+              "size": [256, 16],
+              "text": "Connection lost",
+              "font": {
+                "size": 14,
+                "lineHeight": "16px",
+                "weight": "400",
+                "family": "-apple-system"
+              },
+              "color": "rgb(229, 72, 77)",
+              "children": []
+            }
+          ]
+        },
+        {
+          "label": "button.action",
+          "size": [97, 32],
+          "padding": [0, 12, 0, 12],
+          "radius": [8, 8, 8, 8],
+          "text": "Reconnect",
+          "font": {
+            "size": 14,
+            "lineHeight": "20px",
+            "weight": "500",
+            "family": "-apple-system"
+          },
+          "color": "rgb(255, 255, 255)",
+          "background": "rgb(28, 28, 28)",
+          "children": []
+        }
+      ]
+    }
+  ]
+}</code></pre>
+          </div>
+          <div class="panel" role="tabpanel" id="panel-prompt" aria-labelledby="tab-prompt" tabindex="0">
+            <p class="panel-note">The text spec with text colour and font family added, a short note above it and a reading key below, so an assistant can use the numbers without further explanation.</p>
+<pre><code>UI spec measured from a rendered web page with Mikron. Sizes are in CSS px and come from the live layout, so treat them as exact.
+
+Page: dabarov.github.io/mikron
+Selection: 464 × 73
+Inside: section#try.try › div.stage › article#card.card › ul.list
+
+```text
+li.row — 464 × 73 · padding 16 · gap 12
+  span.status.bad — 3 × 40 · radius 1.5 · bg rgb(229, 72, 77)
+  span.icon — 40 × 40 · radius 10 · bg rgb(31, 31, 31)
+  div.meta — 256 × 40 · gap 4
+    span.name "Relay" — color rgb(242, 242, 243) · font 16px/20px 500 -apple-system
+    span.state.bad "Connection lost" — color rgb(229, 72, 77) · font 14px/16px 400 -apple-system
+  button.action "Reconnect" — 97 × 32 · padding 0 12 · radius 8 · bg rgb(28, 28, 28) · color rgb(255, 255, 255) · font 14px/20px 500 -apple-system
+```
+
+How to read the spec:
+- One line per element. Indentation is DOM nesting. The name is the tag with its #id and .classes, then the visible text in quotes.
+- "W × H" is the border-box size of the whole element.
+- padding and radius are in CSS shorthand order (top right bottom left; radius starts at the top-left corner).
+- gap is the space between the element's children ("x / y" when the two axes differ).
+- font is size/line-height, weight and family. bg and color are computed values.
+- "×N" after a name means N identical siblings in a row. "(partial)" means the selection cut through the element.</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="pair">
+        <div class="col" aria-labelledby="quieth">
+          <h2 id="quieth">It only acts on Shift + drag</h2>
+          <ul class="points">
+            <li>Typing is safe. Shift with a letter, Shift+Tab and shortcuts never start it.</li>
+            <li>Text fields, sliders, maps, code editors, canvas and video are left alone.</li>
+            <li>If a page claims the mouse press for itself, Mikron backs off.</li>
+            <li>Switch it off for one site, or everywhere with Alt+Shift+M.</li>
+          </ul>
+        </div>
+        <div class="col" aria-labelledby="privh">
+          <h2 id="privh">Nothing leaves your browser</h2>
+          <ul class="points">
+            <li>Mikron reads layout only while you draw a selection, on your device.</li>
+            <li>While installed it makes no network requests. No analytics, no remote code.</li>
+            <li>Every line is public under the Apache 2.0 licence, with a test suite.</li>
+            <li>The <a href="https://github.com/dabarov/mikron/blob/main/PRIVACY.md">privacy policy</a> is short and says what each permission is for.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="limits" aria-labelledby="limh">
+        <h2 id="limh">What it does not do</h2>
+        <p>Mikron measures the top frame of a page: the inside of an iframe is drawn as one box, and so are canvas and video. It needs a mouse or trackpad, so there is no touch gesture. Browser pages such as <span class="mono-sys">chrome://</span> and the Chrome Web Store do not allow extensions at all.</p>
+      </section>
+
+      <section class="closing" aria-labelledby="closeh">
+        <h2 id="closeh">Add it and measure the next page you open</h2>
+        <div class="cta">
+          <a class="btn" data-store="closing" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=closing">Add to Chrome</a>
+          <a class="btn ghost" href="https://github.com/dabarov/mikron">Read the source</a>
+        </div>
+        <p class="facts">Mikron is free. If it saves you time, you can <a href="https://ko-fi.com/dabarov">say thanks on Ko-fi</a>.</p>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <a href="https://github.com/dabarov/mikron">GitHub</a>
+      <a href="https://github.com/dabarov/mikron/issues">Report a problem</a>
+      <a href="https://github.com/dabarov/mikron/blob/main/PRIVACY.md">Privacy</a>
+      <a href="https://github.com/dabarov/mikron/blob/main/CHANGELOG.md">Changelog</a>
+      <span class="grow"></span>
+      <span class="ver">Version __VERSION__</span>
+    </footer>
+  </div>
+
+  <script src="mikron-demo.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>

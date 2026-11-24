@@ -4,7 +4,7 @@
   "short_name": "Mikron",
   "description": "Measure any web page: hold Shift and drag to see padding, gaps, sizes and corner radius as a live blueprint, then copy the spec.",
   "homepage_url": "https://github.com/dabarov/mikron",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "minimum_chrome_version": "99",
   "action": {
     "default_title": "Mikron",

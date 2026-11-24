@@ -1,7 +1,8 @@
 /**
  * Mikron clipboard spec. Defines `M.formatSpec(model, selRect, opts) -> string`.
- * `opts.format`: 'text' (default) | 'json' (JSON string). Never throws; all numbers are layout px
- * (on-screen value / node.scale).
+ * `opts.format`: 'text' (default) | 'json' (JSON string) | 'prompt' (the text spec with text colour and font
+ * family added, wrapped in a short note and a reading key, for pasting into an AI assistant). Never throws;
+ * all numbers are layout px (on-screen value / node.scale).
  */
 (function () {
   'use strict';
@@ -94,7 +95,11 @@
     };
   }
 
-  function lineOf(d) {
+  /** Font family as written in the prompt format: quoted when it has anything but word characters. */
+  const familyText = (f) => (/^[\w-]+$/.test(f) ? f : `"${String(f).replace(/"/g, '')}"`);
+
+  /** One spec line. `rich` (prompt format) adds the text colour and the font family. */
+  function lineOf(d, rich) {
     const parts = [];
     if (d.showSize) parts.push(`${d.size[0]} × ${d.size[1]}`);
     if (d.padding) parts.push(`padding ${shorthand(...d.padding)}`);
@@ -104,9 +109,10 @@
     }
     if (d.radius) parts.push(`radius ${shorthand(...d.radius)}`);
     if (d.background) parts.push(`bg ${d.background}`);
+    if (rich && d.color) parts.push(`color ${d.color}`);
     if (d.font) {
       const f = d.font;
-      parts.push(`font ${num(f.size)}px/${f.lineHeight || 'normal'} ${f.weight || ''}`.trim());
+      parts.push((`font ${num(f.size)}px/${f.lineHeight || 'normal'} ${f.weight || ''}`.trim() + (rich && f.family ? ' ' + familyText(f.family) : '')));
     }
     const name = (d.text ? `${d.label} "${String(d.text).replace(/"/g, '\\"')}"` : d.label) + (d.count > 1 ? ` ×${d.count}` : '');
     return name + (parts.length ? ' — ' + parts.join(' · ') : '') + (d.partial ? ' (partial)' : '');
@@ -182,11 +188,29 @@
     return { tree, context: named.slice(-4) };
   }
 
-  function flatten(ds, depth, lines) {
+  function flatten(ds, depth, lines, rich) {
     for (const d of ds) {
-      lines.push('  '.repeat(depth) + lineOf(d));
-      flatten(d.children, depth + 1, lines);
+      lines.push('  '.repeat(depth) + lineOf(d, rich));
+      flatten(d.children, depth + 1, lines, rich);
     }
+  }
+
+  /** How to read the lines of the spec; closes the prompt format so the reader needs no other context. */
+  const PROMPT_KEY = [
+    'How to read the spec:',
+    '- One line per element. Indentation is DOM nesting. The name is the tag with its #id and .classes, then the visible text in quotes.',
+    '- "W × H" is the border-box size of the whole element.',
+    '- padding and radius are in CSS shorthand order (top right bottom left; radius starts at the top-left corner).',
+    '- gap is the space between the element\'s children ("x / y" when the two axes differ).',
+    '- font is size/line-height, weight and family. bg and color are computed values.',
+    '- "×N" after a name means N identical siblings in a row. "(partial)" means the selection cut through the element.',
+  ].join('\n');
+
+  /** A code fence longer than any run of backticks in the body. */
+  function fenceFor(body) {
+    let longest = 0;
+    for (const m of body.match(/`+/g) || []) longest = Math.max(longest, m.length);
+    return '`'.repeat(Math.max(3, longest + 1));
   }
 
   function toJson(d) {
@@ -235,8 +259,29 @@
         // keep flat number arrays on one line: [8, 8, 8, 8]
         return json.replace(/\[([^[\]{}"]*?)\]/g, (m, inner) => (inner.trim() ? '[' + inner.split(',').map((x) => x.trim()).join(', ') + ']' : '[]'));
       }
+      const prompt = !!opts && opts.format === 'prompt';
       const lines = [];
-      flatten(tree, 0, lines);
+      flatten(tree, 0, lines, prompt);
+      if (prompt) {
+        let body = lines.length ? lines : ['(no measurable elements)'];
+        if (lines.length > MAX_LINES) body = lines.slice(0, MAX_LINES).concat(`… ${lines.length - MAX_LINES} more`);
+        const text = body.join('\n');
+        const fence = fenceFor(text);
+        return [
+          'UI spec measured from a rendered web page with Mikron. Sizes are in CSS px and come from the live layout, so treat them as exact.',
+          '',
+          ...(loc ? [`Page: ${loc}`] : []),
+          `Selection: ${sizeTxt}`,
+          ...(context.length ? [`Inside: ${context.join(' › ')}`] : []),
+          ...(model && model.truncated ? ['Note: page too large to measure completely; some elements are missing.'] : []),
+          '',
+          fence + 'text',
+          text,
+          fence,
+          '',
+          PROMPT_KEY,
+        ].join('\n');
+      }
       const head = `Mikron — ${sizeTxt} selection${loc ? ' on ' + loc : ''}` + (context.length ? `\nInside: ${context.join(' › ')}` : '')
         + (model && model.truncated ? '\nNote: page too large to measure completely; some elements are missing.' : '');
       if (!lines.length) return head + '\n\n(no measurable elements)';

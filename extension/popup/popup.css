@@ -143,8 +143,8 @@ kbd { display: inline-flex; align-items: center; height: 20px; padding: 0 7px; b
 .keys em { font-style: normal; color: #e6e6e6; font-size: 12px; }
 
 /* ---------- footer links (quiet) ---------- */
-.foot { display: flex; align-items: center; gap: 14px; margin: 0 16px; padding: 8px 0 10px; border-top: 1px solid var(--line); }
+.foot { display: flex; align-items: center; gap: 12px; margin: 0 16px; padding: 8px 0 10px; border-top: 1px solid var(--line); }
 .fgap { flex: 1; }
-.flink { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; line-height: 18px; text-decoration: none; border-radius: 4px; }
+.flink { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 12px; line-height: 18px; text-decoration: none; white-space: nowrap; border-radius: 4px; }
 .flink:hover { color: var(--text); }
 .flink .heart { flex: none; }

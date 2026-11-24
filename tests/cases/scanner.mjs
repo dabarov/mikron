@@ -218,6 +218,30 @@ describe('scanner spec', () => {
     t.ok(!('truncated' in JSON.parse(fullJson)), 'json: no key when complete');
   });
 
+  test('prompt format: the text lines plus colour and family, with the note, an empty selection and backtick-safe fences', async (t) => {
+    const page = await load(t, 'spec-list.html', { width: 600, height: 1700 });
+    const sel = { x: 0, y: 0, w: 600, h: 1600 };
+    const [text, prompt, cut, empty, ticks] = await page.evaluate((s) => {
+      const m = __MIKRON__.scan();
+      const f = (mm, format) => __MIKRON__.formatSpec(mm, s, { format });
+      const tick = { ...m, nodes: m.nodes.map((n) => (n.text ? { ...n, text: 'a ```` b' } : n)) };
+      return [f(m, 'text'), f(m, 'prompt'), f({ ...m, truncated: true }, 'prompt'), f({ nodes: [] }, 'prompt'), f(tick, 'prompt')];
+    }, sel);
+    const block = (p) => p.match(/^(`{3,})text\n([\s\S]*?)\n\1$/m);
+    const strip = (l) => l.replace(/color rgba?\([^)]*\)(?: · )?/, '').replace(/(font \S+ \S+) (?:"[^"]*"|[\w-]+)/, '$1');
+    t.ok(block(prompt), 'fenced block:\n' + prompt);
+    t.ok(/ color rgb/.test(block(prompt)[2]) && /font \S+ \S+ (?:"[^"]*"|[\w-]+)/.test(block(prompt)[2]), 'colour and family present:\n' + prompt);
+    t.eq(block(prompt)[2].split('\n').map(strip).join('\n'), text.slice(text.indexOf('\n\n') + 2), 'same lines as the text format once colour and family are removed');
+    const head = (p) => p.slice(0, p.indexOf('\n```')).split('\n');
+    t.eq(head(prompt).filter((l) => /^(Page|Selection|Inside|Note):/.test(l)).map((l) => l.split(':')[0]), text.includes('\nInside:') ? ['Page', 'Selection', 'Inside'] : ['Page', 'Selection'], 'header lines');
+    t.ok(head(prompt).includes('Selection: 600 × 1600'), 'selection size');
+    t.ok(head(cut).includes('Note: page too large to measure completely; some elements are missing.'), 'truncation note');
+    t.ok(!prompt.includes('Note:'), 'no note when complete');
+    t.eq(block(empty)[2], '(no measurable elements)', 'empty selection');
+    t.eq(block(ticks)[1].length, 5, 'fence is longer than the longest run of backticks in the spec');
+    for (const p of [prompt, cut, empty, ticks]) t.ok(p.endsWith('means the selection cut through the element.'), 'reading key last');
+  });
+
   test('demo card selection has no wrapper context and keeps its numbers', async (t) => {
     const page = await load(t, '/demo/index.html', { width: 718, height: 479 });
     const s = await spec(page, { x: 90, y: 20, w: 540, h: 450 });
