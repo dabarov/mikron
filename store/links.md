@@ -28,13 +28,14 @@ Pattern: `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijp
 | Reddit, r/Frontend | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-frontend&utm_campaign=launch` |
 | Reddit, r/css | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-css&utm_campaign=launch` |
 | Reddit, r/SideProject | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-sideproject&utm_campaign=launch` |
-| Reddit, r/opensource | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-opensource&utm_campaign=launch` |
+| Reddit, r/chrome_extensions | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-chrome-extensions&utm_campaign=launch` |
+| Reddit, r/ClaudeAI | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-claudeai&utm_campaign=launch` |
 | Product Hunt | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=producthunt&utm_medium=launch&utm_campaign=launch` |
 | X | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=x&utm_medium=post&utm_campaign=launch` |
 | Bluesky | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=bluesky&utm_medium=post&utm_campaign=launch` |
 | Mastodon | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=mastodon&utm_medium=post&utm_campaign=launch` |
 | LinkedIn | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=linkedin&utm_medium=post&utm_campaign=launch` |
-| dev.to article | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=devto&utm_medium=article&utm_campaign=launch` |
+| Project page, how-it-works article | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&utm_medium=article` |
 | YouTube video description | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=youtube&utm_medium=description` |
 | Newsletter mention | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=<newsletter-name>&utm_medium=newsletter` |
 | Directory listing | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=<directory-name>&utm_medium=directory` |
