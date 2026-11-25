@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
-Planned as 1.1.0. The manifest already carries that version; the date and tag are added when it is published to the Chrome Web Store.
+## [1.1.0] - 2026-11-25
 
 ### Added
 
@@ -45,5 +45,6 @@ First public release.
 - Chip text uses a bundled copy of Geist Mono Bold (SIL Open Font License 1.1).
 - No network requests, no analytics, no remote code.
 
-[Unreleased]: https://github.com/dabarov/mikron/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/dabarov/mikron/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/dabarov/mikron/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/dabarov/mikron/releases/tag/v1.0.0
