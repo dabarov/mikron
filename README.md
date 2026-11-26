@@ -4,7 +4,7 @@ Measure any web page: hold Shift and drag to see padding, gaps, sizes and corner
 
 Mikron is a Chrome extension (Manifest V3, plain JavaScript, no build step). On any page, hold Shift and drag to draw a marquee. Inside it the page is redrawn as a blueprint: text becomes skeleton bars, paddings and gaps become hatched bands with their measured values, boxes get `W × H` chips, and rounded corners get a radius callout. Release to pin the selection, then use the **Copy** tab to copy a spec of everything measured, as text, as JSON, or as a block that is ready to paste into an AI assistant.
 
-Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=github&utm_medium=readme), or [try it in your browser](https://dabarov.github.io/mikron/) without installing anything: the project page runs the same code on a sample card.
+Install it from the [Chrome Web Store](https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=github&utm_medium=readme), or [try it in your browser](https://dabarov.github.io/mikron/) without installing anything: the project page runs the same code on a sample card. How it measures a page is written up in [How Mikron measures any web page without changing it](https://dabarov.github.io/mikron/how-it-works/).
 
 ![Mikron measuring a card: hatched padding bands, size chips and a corner radius](store/assets/hero.gif)
 
@@ -211,7 +211,7 @@ demo/index.html          dark "Connectors" card with fictional products
 demo/light.html          light, content-rich page
 tests/                   Playwright suite (run.mjs, cases/, fixtures/, lib/)
 tools/make-icons.mjs     regenerates the icons
-site/                    the project website: landing page with a live demo, and the page shown after an uninstall
+site/                    the project website: landing page with a live demo, a write-up of how Mikron measures a page, and the page shown after an uninstall
 tools/package.mjs        builds dist/mikron-<version>.zip for the Chrome Web Store
 tools/build-site.mjs     builds the website into dist/site (published by .github/workflows/pages.yml)
 tools/record-demo.mjs    records mikron-demo.mp4 from the real extension
@@ -229,7 +229,7 @@ npm install
 npx playwright install chromium
 ```
 
-Run the tests. The suite (319 cases, about four and a half minutes) launches Chromium with the unpacked extension (headless, persistent context) and serves fixtures from `tests/fixtures/` and the demo pages over a local HTTP server. Each fresh browser profile opens the welcome tab; the harness closes it so the page under test stays in front. Pass a name filter as an argument to run a subset:
+Run the tests. The suite (320 cases, about four and a half minutes) launches Chromium with the unpacked extension (headless, persistent context) and serves fixtures from `tests/fixtures/` and the demo pages over a local HTTP server. Each fresh browser profile opens the welcome tab; the harness closes it so the page under test stays in front. Pass a name filter as an argument to run a subset:
 
 ```bash
 npm test

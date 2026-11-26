@@ -188,6 +188,26 @@ h2 { font-size: 28px; line-height: 34px; font-weight: 600; letter-spacing: -0.02
 .reasons a:hover { background: rgba(255, 255, 255, 0.07); }
 .fine { margin-top: 14px; color: var(--muted); font-size: 14px; line-height: 20px; max-width: 40em; }
 
+/* ---------- article (how-it-works) ---------- */
+.article > p, .article > ul { margin-top: 16px; color: var(--soft); font-size: 17px; line-height: 28px; }
+.article a { color: var(--text); }
+.article .page-head p { max-width: none; }
+.article h2 { margin-top: 56px; font-size: 24px; line-height: 30px; }
+.article h3 { margin-top: 32px; font-size: 17px; line-height: 24px; font-weight: 600; }
+.article h2 + p, .article h3 + p { margin-top: 10px; }
+.article > ul li { position: relative; padding-left: 20px; }
+.article > ul li + li { margin-top: 8px; }
+.article > ul li::before { content: ""; position: absolute; left: 2px; top: 11px; width: 6px; height: 6px; border-radius: 1px; background: var(--accent); }
+.article code { font-family: var(--mono-sys); font-size: 0.88em; padding: 2px 5px; border-radius: 5px; background: rgba(255, 255, 255, 0.07); color: var(--text); }
+.article pre { margin: 16px 0 0; padding: 16px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); overflow: auto; }
+.article pre code { padding: 0; border-radius: 0; background: none; font: 400 13px/20px var(--mono-sys); color: #d7dde5; white-space: pre; tab-size: 2; }
+.article figure { margin: 32px 0 0; }
+.article figure img { width: 100%; max-width: 520px; border-radius: 16px; background: var(--paper); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08); }
+.article .closing { margin-top: 64px; }
+.article .closing h2 { margin-top: 0; }
+.article .closing a.btn { color: #fff; }
+.article > p.fine { margin-top: 24px; max-width: none; color: var(--muted); font-size: 14px; line-height: 20px; }
+
 /* ---------- small screens ---------- */
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; gap: 40px; margin-top: 48px; }

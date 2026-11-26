@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- A write-up on the project website, [How Mikron measures any web page without changing it](https://dabarov.github.io/mikron/how-it-works/): the gesture, the layout scan, the overlay, copying without a clipboard permission, and the tests.
+
 ## [1.1.0] - 2026-11-25
 
 ### Added

@@ -12,6 +12,7 @@ const TOOL = path.join(REPO, 'tools/build-site.mjs');
 const DIR = path.join(OUT, 'site');
 const HOME = '/tests/.out/site/index.html';
 const GONE = '/tests/.out/site/uninstalled/index.html';
+const HOW = '/tests/.out/site/how-it-works/index.html';
 const G = '/tests/fixtures/gesture.html';
 const STORE = 'https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd';
 
@@ -42,7 +43,7 @@ const roots = (p) => p.evaluate(() => document.querySelectorAll('mikron-root').l
 describe('site', () => {
   test('build: the bundle holds the manifest content scripts in order, inside the demo shim; pages are stamped and complete', async (t) => {
     const b = build();
-    for (const f of ['index.html', 'site.css', 'site.js', 'mikron-demo.js', 'uninstalled/index.html', '404.html', 'robots.txt', 'sitemap.xml', '.nojekyll', 'fonts/GeistMono-Bold.woff2', 'fonts/OFL.txt', 'img/hero.gif', 'img/social-preview.png', 'img/icon-48.png']) {
+    for (const f of ['index.html', 'site.css', 'site.js', 'mikron-demo.js', 'uninstalled/index.html', 'how-it-works/index.html', '404.html', 'robots.txt', 'sitemap.xml', '.nojekyll', 'fonts/GeistMono-Bold.woff2', 'fonts/OFL.txt', 'img/hero.gif', 'img/social-preview.png', 'img/icon-48.png']) {
       t.ok(fs.existsSync(path.join(DIR, f)), `built ${f}`);
     }
     t.ok(!fs.existsSync(path.join(DIR, '_demo')), 'build inputs are not published');
@@ -161,6 +162,38 @@ describe('site', () => {
     await cardDrag(p);
     t.eq(await roots(p), 1, 'still one overlay');
     t.ok((await chips(p)).length > 12, 'chips drawn');
+  });
+
+  test('how-it-works page: reachable from the landing page, stamped, self-contained, and its sample is real output', async (t) => {
+    build();
+    const landingHtml = fs.readFileSync(path.join(DIR, 'index.html'), 'utf8');
+    t.ok(/<footer[\s\S]*href="how-it-works\/"/.test(landingHtml), 'the landing page footer links to it');
+    t.ok(fs.readFileSync(path.join(DIR, 'sitemap.xml'), 'utf8').includes('https://dabarov.github.io/mikron/how-it-works/'), 'it is in the sitemap');
+    const p = await t.open(HOW, { viewport: { width: 1100, height: 820 } });
+    const info = await p.evaluate(async () => {
+      const img = document.querySelector('.article figure img');
+      await img.decode().catch(() => {});
+      return {
+        title: document.title,
+        h1: document.querySelector('h1').textContent.trim(),
+        img: img.naturalWidth,
+        store: [...document.querySelectorAll('a[data-store]')].map((a) => a.href),
+        version: document.querySelector('.ver').textContent,
+        external: performance.getEntriesByType('resource').map((r) => r.name).filter((n) => !n.startsWith(location.origin)),
+        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        sample: [...document.querySelectorAll('.article pre code')].map((c) => c.textContent).find((x) => x.startsWith('UI spec measured')) || '',
+      };
+    });
+    t.eq(info.h1, 'How Mikron measures any web page without changing it', 'heading');
+    t.eq(info.title, info.h1, 'title');
+    t.ok(info.img > 0, 'the recording loads');
+    t.eq(info.store, [`${STORE}?utm_source=site&utm_medium=article`, `${STORE}?utm_source=site&utm_medium=article`], 'store links are tagged as the article');
+    t.eq(info.version, `Version ${manifest.version}`, 'version stamped');
+    t.eq(info.external, [], 'no external resources');
+    t.ok(info.overflow <= 0, 'no sideways scroll');
+    // The For AI sample is the landing page's one, which the case above checks against the formatter's real output.
+    const landing = await t.open(HOME, { viewport: { width: 1100, height: 820 } });
+    t.eq(info.sample, await landing.textContent('#panel-prompt code'), 'the For AI sample is the landing page sample');
   });
 
   test('uninstalled page: reason links open the feedback form with the reason and the version; odd versions are ignored', async (t) => {

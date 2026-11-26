@@ -22,7 +22,6 @@ Pattern: `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijp
 | Project page, hero button | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&utm_medium=hero` |
 | Project page, closing button | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&utm_medium=closing` |
 | Page shown after an uninstall | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&utm_medium=uninstalled` |
-| Hacker News (Show HN) | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=hackernews&utm_medium=post&utm_campaign=launch` |
 | Reddit, r/webdev | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-webdev&utm_campaign=launch` |
 | Reddit, r/web_design | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-web-design&utm_campaign=launch` |
 | Reddit, r/Frontend | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-frontend&utm_campaign=launch` |
@@ -31,12 +30,10 @@ Pattern: `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijp
 | Reddit, r/chrome_extensions | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-chrome-extensions&utm_campaign=launch` |
 | Reddit, r/ClaudeAI | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=reddit&utm_medium=r-claudeai&utm_campaign=launch` |
 | Product Hunt | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=producthunt&utm_medium=launch&utm_campaign=launch` |
-| X | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=x&utm_medium=post&utm_campaign=launch` |
-| Bluesky | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=bluesky&utm_medium=post&utm_campaign=launch` |
-| Mastodon | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=mastodon&utm_medium=post&utm_campaign=launch` |
-| LinkedIn | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=linkedin&utm_medium=post&utm_campaign=launch` |
 | Project page, how-it-works article | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&utm_medium=article` |
 | YouTube video description | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=youtube&utm_medium=description` |
+| Instagram, bio or story link | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=instagram&utm_medium=profile` |
+| Threads post | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=threads&utm_medium=post` |
 | Newsletter mention | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=<newsletter-name>&utm_medium=newsletter` |
 | Directory listing | `https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=<directory-name>&utm_medium=directory` |
 

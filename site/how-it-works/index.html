@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Mikron measures any web page without changing it</title>
+<meta name="description" content="How a Chrome extension reads padding, gaps, sizes and corner radii from a live page: the Shift + drag gesture, the layout scan, the overlay, copying without a clipboard permission, and the tests.">
+<link rel="canonical" href="https://dabarov.github.io/mikron/how-it-works/">
+<link rel="icon" type="image/png" sizes="32x32" href="../img/icon-32.png">
+<link rel="apple-touch-icon" href="../img/icon-128.png">
+<meta name="theme-color" content="#121212">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Mikron">
+<meta property="og:title" content="How Mikron measures any web page without changing it">
+<meta property="og:description" content="The gesture, the layout scan, the overlay and the copied spec of a Chrome extension that redraws any part of a page as a blueprint.">
+<meta property="og:url" content="https://dabarov.github.io/mikron/how-it-works/">
+<meta property="og:image" content="https://dabarov.github.io/mikron/img/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="../site.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "How Mikron measures any web page without changing it",
+  "description": "How a Chrome extension reads padding, gaps, sizes and corner radii from a live page.",
+  "url": "https://dabarov.github.io/mikron/how-it-works/",
+  "image": "https://dabarov.github.io/mikron/img/social-preview.png",
+  "datePublished": "2026-11-27",
+  "about": { "@type": "SoftwareApplication", "name": "Mikron", "url": "https://dabarov.github.io/mikron/" }
+}
+</script>
+</head>
+<body>
+  <div class="wrap narrow">
+    <header class="top">
+      <a class="brand" href="../"><img src="../img/icon-48.png" alt="" width="28" height="28"><span>Mikron</span></a>
+      <nav class="top-nav" aria-label="Site">
+        <a href="https://github.com/dabarov/mikron">GitHub</a>
+        <a class="btn small" data-store="article" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=article">Add to Chrome</a>
+      </nav>
+    </header>
+
+    <main>
+      <article class="article">
+        <div class="page-head">
+          <h1>How Mikron measures any web page without changing it</h1>
+          <p>Mikron is a Chrome extension I built for reading the spacing of a page. Hold Shift, drag a box over any area, and that area is redrawn as a blueprint: padding and gaps as hatched bands with their values, a size chip on each box, an arc on rounded corners. One click copies the numbers as text.</p>
+        </div>
+
+        <figure>
+          <img src="../img/hero.gif" alt="Mikron measuring a card: hatched padding bands, size chips and a corner radius" width="880" height="770">
+        </figure>
+
+        <p>You can <a href="../#try">try it without installing</a>: the project page runs the extension's own code on a sample card. This page is about the parts that took longer than I expected.</p>
+
+        <h2>The gesture has to be invisible until you want it</h2>
+        <p>A content script on every page that reacts to Shift is a good way to annoy people. Shift is used for capitals, for extending a text selection and for half the shortcuts in any web app. So several things have to be true before anything shows:</p>
+        <ul>
+          <li>Shift has to be held for 250 ms, and the pointer has to move 4 px after that. Only then does the cursor become a crosshair.</li>
+          <li>Any other key pressed while Shift is down cancels the attempt, so Shift+letter and Shift+Tab never arm it.</li>
+          <li>A press on an input, a code editor, a map, a canvas, a video or anything draggable never starts a selection.</li>
+          <li>If the page calls <code>preventDefault()</code> on <code>pointerdown</code>, or captures the pointer, the page owns the press and Mikron backs off.</li>
+          <li>Under 6 px of travel the press is a plain click, and Mikron replays what the browser would have done, such as extending the text selection.</li>
+        </ul>
+        <p>The rule I ended up with: a plain click never changes anything.</p>
+
+        <h2>Reading layout without changing it</h2>
+        <p>When you drag, Mikron walks the DOM under the selection and builds a model: one node per element, with its border box, padding, border, radius, text lines and gaps. Everything comes from three read-only calls: <code>getBoundingClientRect()</code>, <code>getComputedStyle()</code>, and <code>Range.getClientRects()</code> for text.</p>
+        <p>Three things made this harder than it sounds.</p>
+
+        <h3>Transforms and zoom</h3>
+        <p><code>getBoundingClientRect()</code> returns on-screen pixels. On a card scaled to 0.8, a 16 px padding measures as 12.8. The number a developer wants is the one written in the CSS, so each element gets a scale factor and every value is divided by it. Simplified:</p>
+        <pre><code>const rect = el.getBoundingClientRect();
+const scale = el.offsetWidth ? rect.width / el.offsetWidth : 1;
+const cssWidth = rect.width / scale;</code></pre>
+        <p>Rotated and skewed elements get no padding bands or radius callouts, because a band on a rotated box is no longer a rectangle.</p>
+
+        <h3>Gaps</h3>
+        <p>The space between two siblings can come from <code>gap</code>, from margins or from <code>justify-content: space-between</code>. Reading the <code>gap</code> property covers one of those. Mikron measures the distance between the rendered boxes of the children instead, so the number is what you see, whatever produced it.</p>
+
+        <h3>Text</h3>
+        <p>A paragraph is one element but several lines. A <code>Range</code> over the text gives one rectangle per line fragment, and the grey bars in the blueprint are drawn from those.</p>
+        <p>The scan has a budget: the viewport plus a 300 px margin, and 1500 nodes or 40 ms, whichever comes first. If it runs out, the size label says "partial" and the copied spec starts with a note, so a cut-off result is never presented as complete.</p>
+
+        <h2>Names a person can read</h2>
+        <p>Each line of the copied spec starts with a name such as <code>button.btn</code> or <code>li.row</code>. On a site built with utility classes or CSS-in-JS, the raw class list is noise: <code>flex items-center px-4 css-1x2y3z</code>. Mikron drops generated prefixes (<code>css-</code>, <code>sc-</code>, <code>jsx-</code>, <code>svelte-</code>) and layout utilities (<code>flex-</code>, <code>px-</code>, <code>text-</code>, <code>bg-</code> and so on), keeps at most two classes, and caps the name at 40 characters.</p>
+
+        <h2>Drawing over a page you do not own</h2>
+        <p>The overlay lives in a shadow root on a custom element, so page styles cannot reach it and its styles cannot leak out. The scanner skips that element; otherwise Mikron would measure its own chips.</p>
+        <p>The chips use a bundled monospace font, and loading it was a small puzzle. Chrome ignores <code>@font-face</code> inside a shadow root, and a rule injected into the page is subject to the page's Content Security Policy. So the service worker reads the font file from the package, hands the bytes to the content script, and the script registers them with <code>new FontFace(name, arrayBuffer)</code>. No CSP directive applies to a binary source. If anything fails, the chips fall back to the system monospace font.</p>
+
+        <h2>Copying without a clipboard permission</h2>
+        <p>Mikron has no <code>clipboardWrite</code> permission. The Copy click is a user gesture, so the content script calls <code>document.execCommand('copy')</code> and fills the clipboard in its own <code>copy</code> listener. Simplified:</p>
+        <pre><code>window.addEventListener('copy', (e) =&gt; {
+  e.clipboardData.setData('text/plain', spec);
+  e.preventDefault();
+}, true);
+
+document.execCommand('copy');</code></pre>
+        <p>The same listener handles Cmd/Ctrl+C while a selection is pinned, unless you have text selected or a field focused. In that case the copy is yours.</p>
+
+        <h2>A spec an AI assistant can use</h2>
+        <p>Version 1.1 adds a third copy format, "For AI". It is the text spec with colours and font families added, plus a short key that explains the notation:</p>
+        <pre><code>UI spec measured from a rendered web page with Mikron. Sizes are in CSS px and come from the live layout, so treat them as exact.
+
+Page: dabarov.github.io/mikron
+Selection: 464 × 73
+Inside: section#try.try › div.stage › article#card.card › ul.list
+
+```text
+li.row — 464 × 73 · padding 16 · gap 12
+  span.status.bad — 3 × 40 · radius 1.5 · bg rgb(229, 72, 77)
+  span.icon — 40 × 40 · radius 10 · bg rgb(31, 31, 31)
+  div.meta — 256 × 40 · gap 4
+    span.name "Relay" — color rgb(242, 242, 243) · font 16px/20px 500 -apple-system
+    span.state.bad "Connection lost" — color rgb(229, 72, 77) · font 14px/16px 400 -apple-system
+  button.action "Reconnect" — 97 × 32 · padding 0 12 · radius 8 · bg rgb(28, 28, 28) · color rgb(255, 255, 255) · font 14px/20px 500 -apple-system
+```
+
+How to read the spec:
+- One line per element. Indentation is DOM nesting. The name is the tag with its #id and .classes, then the visible text in quotes.
+- "W × H" is the border-box size of the whole element.
+- padding and radius are in CSS shorthand order (top right bottom left; radius starts at the top-left corner).
+- gap is the space between the element's children ("x / y" when the two axes differ).
+- font is size/line-height, weight and family. bg and color are computed values.
+- "×N" after a name means N identical siblings in a row. "(partial)" means the selection cut through the element.</code></pre>
+        <p>A model that reads a screenshot has to estimate spacing. This gives it measured values and tells it how to read them.</p>
+
+        <h2>The demo runs the real code</h2>
+        <p>The <a href="../#try">project page</a> lets you Shift + drag without installing anything. It is not a reimplementation: a build script concatenates the extension's content scripts into one file and puts a small stand-in for the <code>chrome</code> API in front. If the real extension is installed, the page's copy steps aside so nothing is drawn twice.</p>
+
+        <h2>Tests</h2>
+        <p>There is no build step and no framework, so the safety net is the test suite: Playwright cases that run against the unpacked extension in a real Chromium. They cover the gesture, the scanner, the drawing, the copied spec, the popup and this website.</p>
+
+        <h2>What it does not do</h2>
+        <ul>
+          <li>It works in the top frame only. An iframe is drawn as one box.</li>
+          <li>Canvas and video are one box with a size.</li>
+          <li>It needs a mouse or trackpad. There is no touch gesture.</li>
+          <li>It is a Chrome extension. Other browsers are not supported yet.</li>
+        </ul>
+
+        <div class="closing">
+          <h2>Mikron is free, makes no network requests and has no analytics.</h2>
+          <div class="cta">
+            <a class="btn" data-store="article-closing" href="https://chromewebstore.google.com/detail/mikron-measure-css-spacin/ijpekfklopidjlpghniabhgglndlochd?utm_source=site&amp;utm_medium=article">Add to Chrome</a>
+            <a class="btn ghost" href="../#try">Try it in the browser</a>
+            <a class="btn ghost" href="https://github.com/dabarov/mikron">Source on GitHub</a>
+          </div>
+        </div>
+
+        <p class="fine">If Mikron measures something wrong on a site you use, <a href="https://github.com/dabarov/mikron/issues">an issue with the URL</a> helps a lot. I used an AI assistant (Claude) while building Mikron and writing this page.</p>
+      </article>
+    </main>
+
+    <footer class="foot">
+      <a href="../">About Mikron</a>
+      <a href="https://github.com/dabarov/mikron">GitHub</a>
+      <a href="https://github.com/dabarov/mikron/issues">Report a problem</a>
+      <a href="https://github.com/dabarov/mikron/blob/main/PRIVACY.md">Privacy</a>
+      <span class="grow"></span>
+      <span class="ver">Version __VERSION__</span>
+    </footer>
+  </div>
+</body>
+</html>
